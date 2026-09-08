@@ -1322,8 +1322,10 @@ function setSelectedNiveshProduct(card, resetQuantity = true) {
 
 function getSelectedNiveshProduct() {
   if (selectedNiveshProduct) return selectedNiveshProduct;
-  const firstCard = document.querySelector("[data-product-card][data-product-unit-price]");
-  setSelectedNiveshProduct(firstCard);
+  const defaultCard = document.querySelector(
+    '[data-product-card][data-product-code="' + NIVESH_DEFAULT_PRODUCT_CODE + '"][data-product-unit-price]'
+  );
+  setSelectedNiveshProduct(defaultCard || document.querySelector("[data-product-card][data-product-unit-price]"));
   return selectedNiveshProduct;
 }
 
@@ -1358,6 +1360,10 @@ function getCheckoutDiscount() {
 }
 
 /* ── Selection UI: hero chips, cards, sticky bar and modal all show one truth ── */
+/* The recommended pass every CTA lands on unless the visitor (or a deep link)
+   picks another one. */
+const NIVESH_DEFAULT_PRODUCT_CODE = "nivesh_delhi_insight";
+
 const NIVESH_TIER_ALIASES = {
   learner: "nivesh_delhi_learner",
   insight: "nivesh_delhi_insight",
@@ -1404,6 +1410,7 @@ let userChosePass = false;
 /* The first card is the entry-level pass, so it is the default the "from ₹…"
    messaging promises. */
 function defaultProductCode() {
+  if (findProductCard(NIVESH_DEFAULT_PRODUCT_CODE)) return NIVESH_DEFAULT_PRODUCT_CODE;
   const first = document.querySelector("[data-product-card]");
   return (first && first.dataset.productCode) || "";
 }
@@ -1433,6 +1440,11 @@ function syncSelectionUi() {
 
   const passPriceEl = document.querySelector("[data-selected-pass-price]");
   if (passPriceEl) passPriceEl.textContent = unitPrice > 0 ? formatMoney(unitPrice) : "—";
+
+  // Keep the pass dropdown in step even while the modal is closed, so it can
+  // never disagree with the pass every other surface is showing.
+  const ticketSelect = document.getElementById("reg-checkout-ticket");
+  if (ticketSelect && code && ticketSelect.value !== code) ticketSelect.value = code;
 
   const stickyPassEl = document.querySelector("[data-sticky-pass]");
   const stickyPriceEl = document.querySelector("[data-sticky-price]");
