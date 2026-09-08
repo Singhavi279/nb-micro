@@ -12,7 +12,7 @@
 window.NB_CONFIG = {
   "ga4Id": "G-6TLYWEPS3Y",
   "metaPixelId": "",
-  "analyticsEnabled": false,
+  "analyticsEnabled": true,
   "marketingEnabled": false,
   "verificationEndpoint": ""
 };
@@ -96,6 +96,8 @@ window.constants = {
   }
   let gaStarted = false, metaStarted = false;
   function addScript(src) {
+    const origin = src.split("?")[0];
+    if (document.querySelector('script[src^="' + origin + '"]')) return;
     const s = document.createElement("script");
     s.src = src;
     s.async = true;
@@ -1005,8 +1007,9 @@ window.constants = {
     card.dataset.productSalePrice = money(sale);
     card.dataset.productRegularPrice = String(regular);
     card.dataset.productName = data.product_name || card.querySelector("[data-product-name]").textContent;
-    card.dataset.productCouponCode = data._coupon_code || "";
-    card.dataset.productCouponDiscount = String(data._amount_discounted || 0);
+    const coupon = readProductCoupon(data);
+    card.dataset.productCouponCode = coupon.code;
+    card.dataset.productCouponDiscount = String(coupon.discount);
     card.querySelector("[data-product-name]").textContent = card.dataset.productName;
     card.querySelector("[data-product-sale-price]").textContent = money(sale);
     const strike = card.querySelector("[data-product-original-price]");
@@ -1021,14 +1024,20 @@ window.constants = {
       option.disabled = false;
       option.textContent = card.dataset.productName + " — ₹" + money(sale);
     }
-    if (typeof window.updateProductCard === "function") window.updateProductCard(card, data);
+    document.querySelectorAll('[data-price-for="' + card.dataset.productCode + '"]').forEach(el => {
+      el.textContent = "₹" + money(sale);
+    });
+    // A pass must be selected the moment a price exists, so a fast tap on any
+    // CTA lands on a priced checkout instead of an empty one.
+    if (typeof window.nbOnPricePainted === "function") window.nbOnPricePainted(card);
   }
 
+  /* Publishes the lowest live price, which the sticky bar shows until the
+     visitor has picked a specific pass. */
   function startingPrice() {
     const amounts = [...prices.values()].map(x => x._sale_price);
-    document.querySelectorAll("[data-starting-price]").forEach(el => {
-      el.textContent = amounts.length ? "· from ₹" + money(Math.min(...amounts)) : "";
-    });
+    window.nbStartingPrice = amounts.length ? Math.min(...amounts) : null;
+    if (typeof window.nbSyncSelectionUi === "function") window.nbSyncSelectionUi();
   }
 
   async function refresh(code) {
@@ -1072,7 +1081,9 @@ window.constants = {
     if (opt) opt.disabled = true;
   });
   if (retry) retry.addEventListener("click", loadPrices);
-  loadPrices();
+  loadPrices().then(() => {
+    if (typeof window.nbApplyIntent === "function") window.nbApplyIntent();
+  });
 
   // CTA Click Tracking
   document.querySelectorAll("[data-cta]").forEach(link => {
@@ -1277,75 +1288,6 @@ function formatMoney(value) {
   return formatted ? "\u20b9" + formatted : "\u20b90";
 }
 
-function normalizeProduct(product) {
-  if (!product || product.error) return null;
-  const salePrice =
-    product._sale_price ??
-    product.sale_price ??
-    product.selling_price ??
-    product.product_amount_with_gst ??
-    product.price;
-  const regularPrice =
-    product._regular_price ??
-    product.regular_price ??
-    product.rate_card_amount ??
-    product.mrp ??
-    product.product_amount_with_gst ??
-    product.final_billing_amount ??
-    product.price;
-
-  const coupon = readProductCoupon(product);
-  return {
-    name: product.name || product.product_name || product.title || product.productTitle || "",
-    salePrice,
-    regularPrice,
-    amount: Number(salePrice) || 0,
-    couponCode: coupon.code,
-    couponDiscount: coupon.discount,
-  };
-}
-
-function updateProductCard(card, product) {
-  const normalized = normalizeProduct(product);
-  if (!normalized) return;
-
-  const salePriceText = formatRupees(normalized.salePrice);
-  const regularPriceText = formatRupees(normalized.regularPrice);
-  const nameEl = card.querySelector("[data-product-name]");
-  const salePriceEl = card.querySelector("[data-product-sale-price]");
-  const originalPriceEl = card.querySelector("[data-product-original-price]");
-  const ctaEl = card.querySelector(".tier-cta");
-
-  if (nameEl && normalized.name) {
-    nameEl.textContent = normalized.name;
-  }
-  card.dataset.productName = normalized.name || (nameEl && nameEl.textContent.trim()) || "";
-  card.dataset.productSalePrice = salePriceText || "";
-  card.dataset.productUnitPrice = String(normalized.amount || "");
-  card.dataset.productRegularPrice = regularPriceText || salePriceText || String(normalized.amount || "");
-  card.dataset.productCouponCode = normalized.couponCode;
-  card.dataset.productCouponDiscount = String(normalized.couponDiscount);
-
-  if (salePriceEl && salePriceText) {
-    salePriceEl.textContent = salePriceText;
-  }
-  if (originalPriceEl) {
-    const hasDiscount = Boolean(regularPriceText && salePriceText && regularPriceText !== salePriceText);
-    if (hasDiscount) {
-      originalPriceEl.textContent = "\u20b9" + regularPriceText;
-      originalPriceEl.setAttribute("aria-label", "Regular price \u20b9" + regularPriceText);
-    }
-    originalPriceEl.hidden = !hasDiscount;
-  }
-  if (ctaEl && salePriceText) {
-    ctaEl.textContent = "Register at \u20b9" + salePriceText;
-  }
-  const ticketOption = document.querySelector('#reg-checkout-ticket option[value="' + card.dataset.productCode + '"]');
-  if (ticketOption && salePriceText) {
-    ticketOption.textContent = (normalized.name || card.dataset.productName || ticketOption.textContent.split("\u2014")[0].trim()) + " \u2014 \u20b9" + salePriceText;
-  }
-}
-window.updateProductCard = updateProductCard;
 
 function readProductCoupon(product) {
   if (!product) return { code: "", discount: 0 };
@@ -1415,10 +1357,152 @@ function getCheckoutDiscount() {
   return perTicketDiscount * checkoutState.quantity;
 }
 
+/* ── Selection UI: hero chips, cards, sticky bar and modal all show one truth ── */
+const NIVESH_TIER_ALIASES = {
+  learner: "nivesh_delhi_learner",
+  insight: "nivesh_delhi_insight",
+  elite: "nivesh_delhi_elite",
+};
+
+function findProductCard(productCode) {
+  if (!productCode) return null;
+  return document.querySelector('[data-product-card][data-product-code="' + productCode + '"]');
+}
+
+function normalizeProductCode(raw) {
+  const value = String(raw || "").trim().toLowerCase();
+  if (!value) return "";
+  if (NIVESH_PRODUCT_CODES.includes(value)) return value;
+  return NIVESH_TIER_ALIASES[value] || "";
+}
+
+/* Reads purchase intent off the landing URL so an ad can point straight at a pass:
+   ?pass=insight, ?tier=elite, ?pcode=nivesh_delhi_learner, #register / #book */
+function readPurchaseIntent() {
+  let params;
+  try {
+    params = new URLSearchParams(location.search);
+  } catch (error) {
+    return { productCode: "", autoOpen: false };
+  }
+  const isPaymentReturn = ["success", "failure", "pending"].includes(params.get("status"));
+  const productCode = normalizeProductCode(
+    params.get("pass") || params.get("tier") || (isPaymentReturn ? "" : params.get("pcode"))
+  );
+  const hash = (location.hash || "").toLowerCase();
+  const openParam = String(params.get("open") || "").toLowerCase();
+  const autoOpen =
+    !isPaymentReturn &&
+    (hash === "#register" || hash === "#book" || openParam === "register" || params.get("register") === "1");
+  return { productCode, autoOpen };
+}
+
+let purchaseIntent = readPurchaseIntent();
+let intentApplied = false;
+let userChosePass = false;
+
+/* The first card is the entry-level pass, so it is the default the "from ₹…"
+   messaging promises. */
+function defaultProductCode() {
+  const first = document.querySelector("[data-product-card]");
+  return (first && first.dataset.productCode) || "";
+}
+
+/* Records that the visitor picked a pass themselves, which locks out the
+   automatic default selection below. */
+function markUserPassChoice(productCode) {
+  userChosePass = true;
+  if (productCode) purchaseIntent.productCode = productCode;
+}
+window.nbMarkUserPassChoice = markUserPassChoice;
+
+function syncSelectionUi() {
+  const product = selectedNiveshProduct;
+  const code = product ? product.product_code : "";
+  const unitPrice = product ? Number(product.unit_price) || 0 : 0;
+
+  // Only show a selected ring once the visitor has actually picked a pass, so
+  // the default selection never competes with the highlighted "Popular" pass.
+  const showSelection = userChosePass && Boolean(code);
+  document.querySelectorAll("[data-select-product]").forEach((chip) => {
+    chip.classList.toggle("is-selected", showSelection && chip.dataset.selectProduct === code);
+  });
+  document.querySelectorAll("[data-product-card]").forEach((card) => {
+    card.classList.toggle("is-selected", showSelection && card.dataset.productCode === code);
+  });
+
+  const passPriceEl = document.querySelector("[data-selected-pass-price]");
+  if (passPriceEl) passPriceEl.textContent = unitPrice > 0 ? formatMoney(unitPrice) : "—";
+
+  const stickyPassEl = document.querySelector("[data-sticky-pass]");
+  const stickyPriceEl = document.querySelector("[data-sticky-price]");
+  if (unitPrice > 0) {
+    if (stickyPassEl) stickyPassEl.textContent = product.product_name || "Selected pass";
+    if (stickyPriceEl) stickyPriceEl.textContent = formatMoney(unitPrice);
+  } else if (Number.isFinite(window.nbStartingPrice) && window.nbStartingPrice !== null) {
+    if (stickyPassEl) stickyPassEl.textContent = "Limited seats · Sep 27";
+    if (stickyPriceEl) stickyPriceEl.textContent = "from " + formatMoney(window.nbStartingPrice);
+  }
+}
+window.nbSyncSelectionUi = syncSelectionUi;
+
+/* Called as each price lands: guarantees a priced pass is selected even if the
+   visitor taps a CTA before the price API answers. */
+function onPricePainted(card) {
+  if (userChosePass) {
+    syncSelectionUi();
+    return;
+  }
+  // Prices resolve in parallel, so the selection must not depend on which
+  // response lands first: the wanted pass always wins once its price arrives,
+  // and any priced pass stands in until then.
+  const wanted = purchaseIntent.productCode || defaultProductCode();
+  const currentPriced = selectedNiveshProduct && Number(selectedNiveshProduct.unit_price) > 0;
+  if (card.dataset.productCode === wanted || !currentPriced) {
+    setSelectedNiveshProduct(card);
+  }
+  syncSelectionUi();
+}
+window.nbOnPricePainted = onPricePainted;
+
+function applyPurchaseIntent() {
+  if (intentApplied) return;
+  intentApplied = true;
+  const card = findProductCard(purchaseIntent.productCode);
+  if (card && card.dataset.productUnitPrice) {
+    markUserPassChoice(purchaseIntent.productCode);
+    setSelectedNiveshProduct(card);
+  }
+  syncSelectionUi();
+  if (!purchaseIntent.autoOpen || typeof openModal !== "function") return;
+  // Mirror the CTA click path, which resets the form (and so restores a
+  // previously verified session) before the modal is shown.
+  const controller = getOtpControllerForModal("register");
+  if (controller && !controller.isVerified) controller.reset();
+  openModal("register");
+}
+window.nbApplyIntent = applyPurchaseIntent;
+
+function updateStepRail(form, viewName) {
+  const modal = form.closest(".modal");
+  const rail = modal && modal.querySelector("[data-step-rail]");
+  if (!rail) return;
+  // Two steps: everything up to and including the details form is step 1, the
+  // payment hand-off is step 2.
+  const step = viewName === "success" ? 3 : viewName === "product-detail" ? 2 : 1;
+  modal.dataset.step = String(step);
+  rail.querySelectorAll("[data-rail-step]").forEach((item) => {
+    const position = Number(item.dataset.railStep);
+    item.classList.toggle("is-active", position === step);
+    item.classList.toggle("is-done", position < step);
+  });
+}
+
 function initProductSelection() {
   document.querySelectorAll("[data-product-card] .tier-cta").forEach((btn) => {
     btn.addEventListener("click", () => {
       const card = btn.closest("[data-product-card]");
+      if (card) markUserPassChoice(card.dataset.productCode);
       setSelectedNiveshProduct(card);
       window.trackGRX("select_tickets", {
         event_category: "click",
@@ -1479,6 +1563,7 @@ function renderCheckout() {
   }
   if (decBtn) decBtn.disabled = checkoutState.quantity <= NIVESH_MIN_QUANTITY;
   if (incBtn) incBtn.disabled = checkoutState.quantity >= NIVESH_MAX_QUANTITY;
+  syncSelectionUi();
 }
 
 function initCheckoutControls() {
@@ -1634,6 +1719,9 @@ function showPaymentStatusIfReturn() {
       el.textContent = "Returned from payment. Please check your ticket confirmation. If payment failed, you can register again.";
     }
   }
+  if (el && typeof el.scrollIntoView === "function") {
+    el.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
   const reference = params.get("paymentReferenceID");
   if (reference && window.NBTracking && typeof window.NBTracking.verifyPayment === "function") {
     window.NBTracking.verifyPayment(reference)
@@ -1676,7 +1764,7 @@ function getFocusableElements(scope) {
 }
 
 function getOtpControllerForModal(name) {
-  const formId = name === "register" ? "registration-form" : name === "partner" ? "partner-form" : name === "nominate" ? "nominate-form" : null;
+  const formId = name === "register" ? "registration-form" : name === "partner" ? "partner-form" : null;
   if (!formId) return null;
   return otpControllers.find((controller) => controller.form && controller.form.id === formId) || null;
 }
@@ -1692,7 +1780,6 @@ function resetFormState(scope) {
     e.hidden = true;
     e.textContent = "";
   });
-  scope.querySelectorAll("[data-form-success]").forEach((s) => (s.hidden = true));
 }
 
 function openModal(name) {
@@ -1709,15 +1796,25 @@ function openModal(name) {
   activeBackdrop.hidden = false;
   document.body.classList.add("modal-open");
 
+  const controller = getOtpControllerForModal(name);
+  if (controller && typeof controller.ensureMounted === "function") controller.ensureMounted();
+
   if (name === "register") {
     const ticketSelect = document.getElementById("reg-checkout-ticket");
     const product = getSelectedNiveshProduct();
     if (ticketSelect && product && product.product_code) {
       ticketSelect.value = product.product_code;
     }
+    renderCheckout();
+    if (product && window.NBTracking?.event) {
+      window.NBTracking.event("view_item", {
+        item_id: product.product_code,
+        currency: "INR",
+        value: Number(product.unit_price) || 0,
+      });
+    }
   }
 
-  const controller = getOtpControllerForModal(name);
   if (controller && typeof controller.ensureGrxControl === "function") {
     controller.ensureGrxControl().then(() => {
       if (!controller.grxEnabled) return;
@@ -1755,47 +1852,6 @@ function closeModal() {
   if (activeElementBeforeModal && typeof activeElementBeforeModal.focus === "function") {
     activeElementBeforeModal.focus();
   }
-}
-
-function getFieldLabel(field) {
-  const label = field.closest("label");
-  return label?.querySelector("span")?.textContent?.trim() || "This field";
-}
-
-function showFormError(form, message, field) {
-  const error = form.querySelector("[data-form-error]");
-  const success = form.querySelector("[data-form-success]");
-  if (success) success.hidden = true;
-  if (error) {
-    error.textContent = message;
-    error.hidden = false;
-  }
-  if (field && typeof field.focus === "function") field.focus();
-}
-
-function handleFormSubmit(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const required = [...form.querySelectorAll("[required]")];
-  const invalid = required.find((f) => !f.validity.valid);
-  const error = form.querySelector("[data-form-error]");
-  const success = form.querySelector("[data-form-success]");
-
-  if (invalid) {
-    showFormError(form, `${getFieldLabel(invalid)} is required or has an invalid value.`, invalid);
-    return;
-  }
-
-  if (error) {
-    error.hidden = true;
-    error.textContent = "";
-  }
-  if (success) {
-    success.hidden = false;
-    success.setAttribute("tabindex", "-1");
-    success.focus({ preventScroll: true });
-  }
-  form.reset();
 }
 
 function handleModalKeydown(event) {
@@ -1845,6 +1901,11 @@ function trackNavClick(btn) {
 openModalButtons.forEach((btn) =>
   btn.addEventListener("click", () => {
     trackNavClick(btn);
+    const card = btn.closest("[data-product-card]") || findProductCard(btn.dataset.selectProduct);
+    if (card) {
+      markUserPassChoice(card.dataset.productCode);
+      setSelectedNiveshProduct(card);
+    }
     openModal(btn.dataset.openModal);
   })
 );
@@ -1855,7 +1916,6 @@ modalBackdrops.forEach((backdrop) =>
   })
 );
 document.addEventListener("keydown", handleModalKeydown);
-document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventListener("submit", handleFormSubmit));
 
 /* ── Mobile OTP Login Controller ── */
 (function () {
@@ -2095,7 +2155,7 @@ document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventLis
     });
   }
 
-  function createOtpController(formId, prefix) {
+  function createOtpController(formId, prefix, { lazy = false } = {}) {
     const form = document.getElementById(formId);
     if (!form) return null;
 
@@ -2118,7 +2178,7 @@ document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventLis
     const submitBtnLabel = submitBtn ? submitBtn.textContent : "";
     const successView = form.querySelector('[data-otp-view="success"]');
     const successCloseBtn = successView ? successView.querySelector("[data-close-modal]") : null;
-    const formType = formId === "registration-form" ? "register" : formId === "nominate-form" ? "nominate" : "partner";
+    const formType = formId === "registration-form" ? "register" : "partner";
     let grxControl = { enabled: false };
     const views = {};
     form.querySelectorAll("[data-otp-view]").forEach((el) => {
@@ -2129,10 +2189,13 @@ document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventLis
     digitsOnly(otpInput, 6);
 
     let formHandle = null;
-    const grxControlPromise =
-      formCode && window.EventFormRenderer && typeof window.EventFormRenderer.fetchConfig === "function"
-        ? window.EventFormRenderer.fetchConfig(formCode, { fetchBaseUrl: EVENTHUB_FORM_FETCH_BASE }).catch(() => null)
-        : null;
+    let mountPromise = null;
+    // Mounting already fetches the form config, so GRX settings are read off the
+    // mounted handle instead of fetching the same config a second time.
+    function ensureMounted() {
+      if (!mountPromise) mountPromise = mountDetailsForm();
+      return mountPromise;
+    }
 
     const state = {
       currentView: "phone",
@@ -2156,8 +2219,7 @@ document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventLis
       if (verifyBtn) verifyBtn.hidden = name !== "otp";
       if (otpStepEl) otpStepEl.hidden = name !== "otp";
       if (phoneVerifiedBadge) phoneVerifiedBadge.hidden = name !== "details";
-      form.classList.toggle("is-entering-otp", name === "otp");
-      form.classList.toggle("is-otp-verified", name === "details");
+      updateStepRail(form, name);
     }
 
     function showStatus(message, type) {
@@ -2264,9 +2326,9 @@ document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventLis
     }
 
     async function ensureGrxControl() {
-      if (grxControl.enabled || !grxControlPromise) return grxControl;
-      const config = await grxControlPromise;
-      if (config) syncGrxControl(config);
+      if (grxControl.enabled) return grxControl;
+      await ensureMounted();
+      syncGrxControl(formHandle && formHandle.config);
       return grxControl;
     }
 
@@ -2722,15 +2784,23 @@ document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventLis
     if (ticketSelect) {
       ticketSelect.addEventListener("change", () => {
         const card = document.querySelector('[data-product-card][data-product-code="' + ticketSelect.value + '"]');
-        if (card) setSelectedNiveshProduct(card);
+        if (card) {
+          if (typeof window.nbMarkUserPassChoice === "function") window.nbMarkUserPassChoice(ticketSelect.value);
+          setSelectedNiveshProduct(card);
+        }
         persistSelectedTicket(ticketSelect.value);
       });
     }
 
-    mountDetailsForm();
+    updateStepRail(form, state.currentView);
+
+    // The registration form is prefetched so a high-intent visitor never waits on
+    // it; secondary forms fetch nothing until their modal is actually opened.
+    if (!lazy) ensureMounted();
 
     return {
       form,
+      ensureMounted,
       sendOtp,
       verifyOtp,
       submitDetails,
@@ -2755,14 +2825,13 @@ document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventLis
 
     otpControllers = [
       createOtpController("registration-form", "reg"),
-      createOtpController("partner-form", "partner"),
-      createOtpController("nominate-form", "nominate"),
+      createOtpController("partner-form", "partner", { lazy: true }),
     ].filter(Boolean);
     if (!otpControllers.length) return;
 
     document.querySelectorAll("[data-open-modal]").forEach((btn) => {
       const name = btn.dataset.openModal;
-      const formId = name === "register" ? "registration-form" : name === "partner" ? "partner-form" : name === "nominate" ? "nominate-form" : null;
+      const formId = name === "register" ? "registration-form" : name === "partner" ? "partner-form" : null;
       const controller = otpControllers.find((c) => c.form.id === formId);
       if (controller) {
         btn.addEventListener("click", () => {
@@ -2805,6 +2874,23 @@ document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventLis
 /* ── 6. Hero Section Countdown & Expert Showcase Carousel ── */
 (() => {
   "use strict";
+
+  const HERO_SPEAKERS = [
+    { name: "Ajit Mishra", role: "SVP of Research, Religare Broking", photo: "https://static.langimg.com/photo/133709675.cms" },
+    { name: "Amit Tripathi", role: "Chief Investment Officer - Fixed Income, Nippon India Mutual Fund", photo: "https://static.langimg.com/photo/133709692.cms" },
+    { name: "Dipesh Garg", role: "Co-Founder, SouthDelhi1", photo: "https://static.langimg.com/photo/133709699.cms" },
+    { name: "Gaurav Bhagat", role: "Founder, Gaurav Bhagat Academy", photo: "https://static.langimg.com/photo/133709712.cms" },
+    { name: "Himanshu Gupta", role: "Head of Research (Retail Broking & Investment), Jainam Broking", photo: "https://static.langimg.com/photo/133709726.cms" },
+    { name: "K Prahlad", role: "Financial Consultant & Director, X Capital India IMF", photo: "https://static.langimg.com/photo/133709742.cms" },
+    { name: "Pankaj Rai", role: "Executive Vice President & Zonal Head, Choice Group", photo: "https://static.langimg.com/photo/133709769.cms" },
+    { name: "Sharad Kohli", role: "Founder & Chairman, KCC Group", photo: "https://static.langimg.com/photo/133709782.cms" },
+    { name: "Sudeep Shah", role: "Vice President – Technical & Derivatives Research, SBICAP Securities", photo: "https://static.langimg.com/photo/133709792.cms" },
+    { name: "Vijay Kedia", role: "Founder of Kedia Securities Pvt. Ltd.", photo: "https://static.langimg.com/photo/133709803.cms" },
+    { name: "Vimal Sagar Tiwari", role: "Co-founder, CoinSwitch", photo: "https://static.langimg.com/photo/133709919.cms" },
+  ];
+
+  const prefersReducedMotion =
+    typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // --- Countdown Timer ---
   function initHeroCountdown() {
@@ -2849,33 +2935,21 @@ document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventLis
 
     if (!imgEl || !nameEl || !roleEl || !dotsContainer) return;
 
-    // Extract speakers from the speaker section
-    const speakerCards = document.querySelectorAll("#speakers .speaker-card");
-    const speakers = [];
-
-    speakerCards.forEach((card) => {
-      const img = card.querySelector("img");
-      const name = card.querySelector(".speaker-name, h3");
-      const role = card.querySelector(".speaker-role, p");
-      if (img && name) {
-        speakers.push({
-          imgSrc: img.getAttribute("src") || img.src,
-          imgAlt: img.getAttribute("alt") || name.textContent.trim(),
-          name: name.textContent.trim(),
-          role: role ? role.textContent.trim() : ""
-        });
-      }
-    });
-
-    if (speakers.length === 0) return;
+    const speakers = HERO_SPEAKERS.map((speaker) => ({
+      imgSrc: speaker.photo,
+      imgAlt: speaker.name,
+      name: speaker.name,
+      role: speaker.role,
+    }));
+    if (!speakers.length) return;
 
     // Generate pagination dots
     dotsContainer.innerHTML = "";
-    speakers.forEach((_, idx) => {
+    speakers.forEach((speaker, idx) => {
       const dot = document.createElement("button");
       dot.className = `showcase-dot ${idx === 0 ? "active" : ""}`;
       dot.setAttribute("type", "button");
-      dot.setAttribute("aria-label", `Slide ${idx + 1}`);
+      dot.setAttribute("aria-label", speaker.name || `Slide ${idx + 1}`);
       dot.addEventListener("click", () => {
         currentIndex = idx;
         renderSpeaker(currentIndex);
@@ -2911,25 +2985,48 @@ document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventLis
       renderSpeaker(currentIndex);
     }
 
-    function resetTimer() {
+    function stopTimer() {
       if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    function resetTimer() {
+      stopTimer();
+      if (prefersReducedMotion || speakers.length < 2) return;
       timer = setInterval(nextSpeaker, 4000);
     }
 
-    // Initial render & timer start
     renderSpeaker(0);
     resetTimer();
 
-    // Pause on hover
     const showcaseCard = document.querySelector(".showcase-card");
     if (showcaseCard) {
-      showcaseCard.addEventListener("mouseenter", () => {
-        if (timer) clearInterval(timer);
-      });
-      showcaseCard.addEventListener("mouseleave", () => {
+      showcaseCard.addEventListener("mouseenter", stopTimer);
+      showcaseCard.addEventListener("mouseleave", resetTimer);
+
+      // Swipe between experts on touch devices.
+      let touchStartX = null;
+      showcaseCard.addEventListener("touchstart", (event) => {
+        touchStartX = event.touches[0].clientX;
+        stopTimer();
+      }, { passive: true });
+      showcaseCard.addEventListener("touchend", (event) => {
+        if (touchStartX === null) return;
+        const deltaX = event.changedTouches[0].clientX - touchStartX;
+        touchStartX = null;
+        if (Math.abs(deltaX) > 40) {
+          currentIndex = (currentIndex + (deltaX < 0 ? 1 : speakers.length - 1)) % speakers.length;
+          renderSpeaker(currentIndex);
+        }
         resetTimer();
-      });
+      }, { passive: true });
     }
+
+    // Don't burn cycles rotating a carousel nobody is looking at.
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopTimer();
+      else resetTimer();
+    });
   }
 
   if (document.readyState === "loading") {

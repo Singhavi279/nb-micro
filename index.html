@@ -3,18 +3,64 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#081126">
   <meta name="description"
-    content="Nivesh Baithak — Hindi-first investor education. September 27, 2026, Bharat Mandapam, New Delhi. Choose your pass and register.">
+    content="Nivesh Baithak — Hindi-first investor education. September 27, 2026, Bharat Mandapam, New Delhi. Limited seats. Book your pass from ₹199.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Nivesh Baithak | Register for September 27</title>
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Nivesh Baithak — Hindi-first investor education, Sep 27, New Delhi">
+  <meta property="og:description"
+    content="Limited seats at Bharat Mandapam. Masterclasses, panels and expert Q&amp;A. Passes from ₹199.">
+  <meta property="og:image" content="https://static.langimg.com/photo/132278264.cms">
+  <meta name="twitter:card" content="summary_large_image">
+
   <link rel="preconnect" href="https://static.langimg.com">
-  <link rel="preconnect" href="https://setufeed.indiatimes.com">
+  <link rel="preconnect" href="https://setufeed.indiatimes.com" crossorigin>
+  <link rel="preconnect" href="https://api.indiatimes.com" crossorigin>
+  <link rel="dns-prefetch" href="https://payment.economictimes.indiatimes.com">
+  <link rel="preload" as="image" href="https://static.langimg.com/photo/132278264.cms" fetchpriority="high">
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Google tag (gtag.js) — loaded here so measurement starts before script.js.
+       gtag('config') is issued by script.js so exactly one page_view is sent,
+       on a URL cleaned of click identifiers. -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6TLYWEPS3Y"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+  </script>
+
   <script defer src="script.js"></script>
 </head>
 
-<body><a class="skip-link" href="#main">Skip to content</a>
+<body>
+  <a class="skip-link" href="#buy">Skip to ticket booking</a>
+
+  <!-- ── Urgency marquee: persistent, tappable route to checkout ── -->
+  <div class="urgency-bar" data-urgency-bar>
+    <button class="urgency-btn" type="button" data-open-modal="register" data-cta="marquee"
+      data-nav-section="urgency_bar" aria-label="Limited spots left. Register now.">
+      <span class="urgency-viewport">
+        <span class="urgency-track">
+          <span class="urgency-set">
+            <span class="urgency-item"><span class="urgency-dot" aria-hidden="true"></span>Limited spots left —
+              register now</span>
+            <span class="urgency-item">Seats are first-come, first-served</span>
+          </span>
+          <span class="urgency-set" aria-hidden="true">
+            <span class="urgency-item"><span class="urgency-dot"></span>Limited spots left — register now</span>
+            <span class="urgency-item">Seats are first-come, first-served</span>
+          </span>
+        </span>
+      </span>
+      <span class="urgency-action" aria-hidden="true">Register</span>
+    </button>
+  </div>
+
   <header class="site-header">
     <div class="header-left">
       <img src="https://static.langimg.com/photo/132278251.cms" alt="Times Internet - Nivesh Baithak" width="180"
@@ -25,21 +71,21 @@
       </div>
     </div>
     <nav class="header-nav" aria-label="Quick Links">
-
-      <a href="#pricing" class="nav-link">Pricing</a>
-      <a class="button button-accent header-register-btn" href="#pricing" data-cta="header">Register</a>
+      <a href="#buy" class="nav-link">Pricing</a>
+      <button class="button button-accent header-register-btn" data-open-modal="register" data-cta="header"
+        data-nav-section="header">Register</button>
     </nav>
   </header>
+
   <main id="main">
     <section class="hero" aria-labelledby="hero-title">
-      <img class="hero-image" src="https://static.langimg.com/photo/132278264.cms" alt="" width="1600" height="900"
-        fetchpriority="high" decoding="async">
+      <img class="hero-image" src="https://static.langimg.com/photo/132278264.cms" alt="" width="1024" height="1024"
+        fetchpriority="high">
       <div class="hero-glow hero-glow-1"></div>
       <div class="hero-glow hero-glow-2"></div>
       <div class="container hero-inner">
         <div class="hero-content">
           <div class="hero-top-row">
-            <!-- Countdown Box -->
             <div class="hero-countdown" id="event-countdown" aria-label="Event Countdown">
               <div class="countdown-label">Event Countdown</div>
               <div class="countdown-timer">
@@ -60,7 +106,6 @@
               </div>
             </div>
 
-            <!-- Initiative Line -->
             <div class="initiative-line">
               <span>An initiative by</span>
               <div class="initiative-badges">
@@ -70,15 +115,37 @@
               </div>
             </div>
           </div>
+
           <h1 id="hero-title" lang="hi">निवेश बैठक</h1>
           <p class="hero-tagline" lang="hi">सही जानकारी बेहतर निवेश की तरफ <span>पहला कदम</span></p>
-          <!-- Action Buttons -->
-          <div class="hero-actions">
-            <a class="button button-accent hero-cta" href="#pricing" data-cta="hero">Register Now <span
-                data-starting-price></span><span aria-hidden="true"> →</span></a>
+
+          <!-- ── One-tap pass picker: selects the pass AND opens checkout ── -->
+          <div class="hero-picker" role="group" aria-label="Choose a pass and register">
+            <p class="hero-picker-label">Pick your pass — book in seconds</p>
+            <div class="pick-row">
+              <button class="pick-chip" type="button" data-open-modal="register" data-cta="hero_chip"
+                data-nav-section="ticket_section" data-ticket-tier="learner"
+                data-select-product="nivesh_delhi_learner">
+                <span class="pick-name">Learner</span>
+                <span class="pick-price"><span data-price-for="nivesh_delhi_learner">₹199</span></span>
+              </button>
+              <button class="pick-chip pick-chip--featured" type="button" data-open-modal="register"
+                data-cta="hero_chip" data-nav-section="ticket_section" data-ticket-tier="insight"
+                data-select-product="nivesh_delhi_insight">
+                <span class="pick-flag">Popular</span>
+                <span class="pick-name">Insight</span>
+                <span class="pick-price"><span data-price-for="nivesh_delhi_insight">—</span></span>
+              </button>
+              <button class="pick-chip" type="button" data-open-modal="register" data-cta="hero_chip"
+                data-nav-section="ticket_section" data-ticket-tier="elite" data-select-product="nivesh_delhi_elite">
+                <span class="pick-name">Elite</span>
+                <span class="pick-price"><span data-price-for="nivesh_delhi_elite">—</span></span>
+              </button>
+            </div>
+            <a class="hero-compare" href="#buy">Compare all passes</a>
+            <p class="hero-reassure">Mobile OTP · UPI, cards &amp; netbanking · Instant confirmation</p>
           </div>
 
-          <!-- Event Facts Grid -->
           <dl class="event-facts">
             <div class="fact-card">
               <dt>Venue</dt>
@@ -99,14 +166,13 @@
           </dl>
         </div>
 
-        <!-- Hero Right: Featured Participating Expert Card with Showcase Controls -->
         <aside class="hero-showcase" aria-labelledby="showcase-heading">
           <div class="showcase-frame">
             <p class="showcase-kicker" id="showcase-heading">Participating Experts</p>
             <div class="showcase-card" id="hero-speaker-card">
               <div class="showcase-photo-wrap">
                 <img id="showcase-img" src="https://static.langimg.com/photo/133709675.cms" alt="Ajit Mishra"
-                  width="420" height="420" loading="eager" decoding="async">
+                  width="420" height="420" fetchpriority="low" decoding="async">
                 <div class="showcase-badge-brand">
                   <span class="showcase-brand-hi" lang="hi">निवेश बैठक</span>
                   <span class="showcase-brand-sub">2026</span>
@@ -117,19 +183,19 @@
                 </div>
               </div>
             </div>
-            <!-- Carousel Dots -->
             <div class="showcase-dots" id="showcase-dots" aria-label="Speaker Navigation"></div>
           </div>
         </aside>
       </div>
-      <a href="#pricing" class="scroll-indicator" aria-label="Scroll down to explore">
+      <a href="#buy" class="scroll-indicator" aria-label="Scroll down to ticket booking">
         <span>SCROLL</span>
         <div class="mouse-icon">
           <div class="wheel"></div>
         </div>
       </a>
     </section>
-    <section class="pricing-section fluid-bg section-growth" id="pricing" aria-labelledby="pricing-title">
+
+    <section class="pricing-section" id="buy" aria-labelledby="pricing-title">
       <div class="container">
 
         <div class="section-heading pricing-heading">
@@ -141,13 +207,13 @@
 
         <div id="statusMessage" class="payment-status hidden" role="status" aria-live="polite"></div>
 
-        <!-- Pricing Cards -->
+        <div class="pricing-meta">
+          <p id="price-status" role="status">Checking current ticket prices…</p>
+          <button id="retry-prices" class="text-button" hidden type="button">Retry ticket prices</button>
+        </div>
 
-        <p id="price-status" role="status">Checking current ticket prices…</p><button id="retry-prices"
-          class="text-button" hidden type="button">Retry ticket prices</button>
         <div class="pricing-grid">
 
-          <!-- Tier 1 -->
           <article class="pricing-card" aria-labelledby="tier1-title" data-product-card
             data-product-code="nivesh_delhi_learner">
             <div class="pricing-card-header">
@@ -163,12 +229,11 @@
               <li><span class="check" aria-hidden="true">✓</span>Digital Certificate</li>
             </ul>
             <button class="button tier-cta tier-cta--base" type="button" disabled data-open-modal="register"
-              data-nav-section="ticket_section">
+              data-cta="card_learner" data-nav-section="ticket_section" data-ticket-tier="learner">
               Checking price…
             </button>
           </article>
 
-          <!-- Tier 2 — Recommended -->
           <article class="pricing-card pricing-card--featured" aria-labelledby="tier2-title" data-product-card
             data-product-code="nivesh_delhi_insight">
             <div class="featured-badge">Most Popular</div>
@@ -186,12 +251,11 @@
               <li><span class="check" aria-hidden="true">✓</span>Priority Seating</li>
             </ul>
             <button class="button tier-cta tier-cta--featured" type="button" disabled data-open-modal="register"
-              data-nav-section="ticket_section">
+              data-cta="card_insight" data-nav-section="ticket_section" data-ticket-tier="insight">
               Checking price…
             </button>
           </article>
 
-          <!-- Tier 3 -->
           <article class="pricing-card" aria-labelledby="tier3-title" data-product-card
             data-product-code="nivesh_delhi_elite">
             <div class="pricing-card-header">
@@ -208,7 +272,7 @@
               <li><span class="check" aria-hidden="true">✓</span>Meet &amp; Greet with all Speakers</li>
             </ul>
             <button class="button tier-cta tier-cta--base" type="button" disabled data-open-modal="register"
-              data-nav-section="ticket_section">
+              data-cta="card_elite" data-nav-section="ticket_section" data-ticket-tier="elite">
               Checking price…
             </button>
           </article>
@@ -222,19 +286,31 @@
     </section>
 
   </main>
+
   <footer class="container footer">
     <p>Nivesh Baithak is an education-only event. No stock recommendations, personal investment advice or assured
       returns.</p>
   </footer>
-  <div class="sticky-cta"><span>September 27 · New Delhi</span><a class="button button-primary" href="#pricing"
-      data-cta="sticky">Register Now <span data-starting-price></span></a></div>
-  <p id="checkout-load-status" class="load-status" role="status" hidden></p><noscript>
+
+  <!-- ── Sticky mobile CTA: always shows what you are buying and for how much ── -->
+  <div class="sticky-cta" data-sticky-cta>
+    <div class="sticky-info">
+      <span class="sticky-pass" data-sticky-pass>Limited seats · Sep 27</span>
+      <span class="sticky-price" data-sticky-price>from ₹199</span>
+    </div>
+    <button class="button button-accent sticky-button" data-open-modal="register" data-cta="sticky"
+      data-nav-section="sticky_cta">Register Now</button>
+  </div>
+
+  <p id="checkout-load-status" class="load-status" role="status" hidden></p>
+  <noscript>
     <p class="container">Please enable JavaScript to load live ticket prices and register. Speaker and event details
       remain available.</p>
   </noscript>
+
   <div class="modal-backdrop" data-modal="register" hidden>
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"
-      aria-describedby="modal-description">
+      aria-describedby="modal-description" data-step="1">
       <button class="modal-close" type="button" aria-label="Close registration form" data-close-modal>
         <span aria-hidden="true">×</span>
       </button>
@@ -246,6 +322,10 @@
           Limited seats available. This is an education-only event. No stock
           recommendations or assured returns will be provided.
         </p>
+        <ol class="step-rail" data-step-rail aria-hidden="true">
+          <li data-rail-step="1"><span class="step-dot">1</span>Your details</li>
+          <li data-rail-step="2"><span class="step-dot">2</span>Payment</li>
+        </ol>
       </div>
 
       <form class="registration-form" id="registration-form" data-registration-form data-demo-form novalidate>
@@ -259,12 +339,24 @@
                 </div>
               </div>
 
+              <div class="form-grid pass-select-block">
+                <label class="form-wide">
+                  <span>Select Pass</span>
+                  <select id="reg-checkout-ticket" required>
+                    <option value="nivesh_delhi_learner">Learner Pass</option>
+                    <option value="nivesh_delhi_insight">Insight Pass</option>
+                    <option value="nivesh_delhi_elite">Elite Pass</option>
+                  </select>
+                </label>
+                <p class="pass-hint"><strong data-selected-pass-price>—</strong> per ticket · inclusive of all taxes</p>
+              </div>
+
               <div class="form-grid">
                 <label class="form-wide">
                   <span>Mobile number</span>
                   <div class="phone-otp-row">
                     <input id="reg-phone-input" aria-label="Mobile number" type="tel" maxlength="10" inputmode="tel"
-                      autocomplete="tel" placeholder="10-digit mobile number">
+                      autocomplete="tel" enterkeyhint="send" placeholder="10-digit mobile number">
                     <button type="button" id="reg-send-otp-btn" class="button button-primary">Send OTP</button>
                     <button type="button" id="reg-verify-otp-btn" class="button button-primary" hidden>Verify
                       OTP</button>
@@ -286,7 +378,7 @@
                     <span>Enter OTP</span>
                     <div class="phone-otp-row">
                       <input id="reg-otp-input" aria-label="6-digit OTP" type="text" maxlength="6" inputmode="numeric"
-                        autocomplete="one-time-code" placeholder="6-digit OTP">
+                        autocomplete="one-time-code" enterkeyhint="go" placeholder="6-digit OTP">
                       <button type="button" id="reg-resend-otp-btn" class="button button-secondary">Resend OTP</button>
                     </div>
                   </label>
@@ -300,7 +392,7 @@
 
                 <p class="form-error" data-form-error role="alert" hidden></p>
 
-                <button class="button button-primary form-submit" id="reg-save-next-btn" type="button">
+                <button class="button button-accent form-submit" id="reg-save-next-btn" type="button">
                   Continue to payment
                 </button>
               </div>
@@ -319,21 +411,11 @@
                 <button type="button" id="checkout-back-btn" class="change-phone-btn">Edit details</button>
               </div>
 
-              <div class="checkout-fields">
-                <label>
-                  <span>Select ticket</span>
-                  <select id="reg-checkout-ticket" required>
-                    <option value="nivesh_delhi_learner">Learner Pass — —</option>
-                    <option value="nivesh_delhi_insight">Insight Pass — —</option>
-                    <option value="nivesh_delhi_elite">Elite Pass — —</option>
-                  </select>
-                </label>
-              </div>
-
               <div class="checkout-ticket">
                 <div>
                   <span class="checkout-label">Ticket price</span>
                   <strong id="checkout-unit-price">—</strong>
+                  <s id="checkout-unit-price-original" hidden></s>
                 </div>
                 <div class="checkout-qty" aria-label="Ticket quantity">
                   <button type="button" id="checkout-qty-dec" aria-label="Decrease ticket quantity">−</button>
@@ -343,6 +425,10 @@
               </div>
 
               <div class="checkout-summary">
+                <div id="checkout-discount-row" hidden>
+                  <span>You save</span>
+                  <strong id="checkout-discount">—</strong>
+                </div>
                 <div>
                   <span>Total</span>
                   <strong id="checkout-total">—</strong>
@@ -359,9 +445,10 @@
 
               <p class="form-error" data-form-error role="alert" hidden></p>
 
-              <button class="button button-primary form-submit" id="checkout-pay-btn" type="submit">
+              <button class="button button-accent form-submit" id="checkout-pay-btn" type="submit">
                 Continue to payment
               </button>
+              <p class="checkout-trust">Secure payment · UPI, cards &amp; netbanking</p>
             </div>
           </div>
         </div>
@@ -387,135 +474,137 @@
         </div>
       </form>
     </section>
-    <div class="modal-backdrop" data-modal="partner" hidden>
-      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="partner-modal-title">
-        <button class="modal-close" type="button" aria-label="Close partner form" data-close-modal>
-          <span aria-hidden="true">×</span>
-        </button>
+  </div>
 
-        <div class="modal-copy">
-          <p class="section-kicker">Partnership</p>
-          <h2 id="partner-modal-title">Partner with Nivesh Baithak</h2>
-          <p id="partner-modal-description">
-            Collaborate with India's premier Hindi-first investment summit. Connect with investors, financial
-            institutions, and retail market leaders.
-          </p>
-        </div>
+  <div class="modal-backdrop" data-modal="partner" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="partner-modal-title">
+      <button class="modal-close" type="button" aria-label="Close partner form" data-close-modal>
+        <span aria-hidden="true">×</span>
+      </button>
 
-        <form class="registration-form" id="partner-form" data-partner-form data-demo-form novalidate>
-          <div class="otp-view is-active" data-otp-view="details">
-            <div class="otp-panel">
-              <div class="checkout-card">
-                <div class="checkout-header">
-                  <div>
-                    <p class="section-kicker">Partner Inquiry</p>
-                    <h3>Enter your organization details</h3>
-                  </div>
+      <div class="modal-copy">
+        <p class="section-kicker">Partnership</p>
+        <h2 id="partner-modal-title">Partner with Nivesh Baithak</h2>
+        <p id="partner-modal-description">
+          Collaborate with India's premier Hindi-first investment summit. Connect with investors, financial
+          institutions, and retail market leaders.
+        </p>
+      </div>
+
+      <form class="registration-form" id="partner-form" data-partner-form data-demo-form novalidate>
+        <div class="otp-view is-active" data-otp-view="details">
+          <div class="otp-panel">
+            <div class="checkout-card">
+              <div class="checkout-header">
+                <div>
+                  <p class="section-kicker">Partner Inquiry</p>
+                  <h3>Enter your organization details</h3>
                 </div>
+              </div>
 
+              <div class="form-grid">
+                <label class="form-wide">
+                  <span>Contact mobile number</span>
+                  <div class="phone-otp-row">
+                    <input id="partner-phone-input" aria-label="Mobile number" type="tel" maxlength="10"
+                      inputmode="tel" autocomplete="tel" enterkeyhint="send" placeholder="10-digit mobile number">
+                    <button type="button" id="partner-send-otp-btn" class="button button-primary">Send OTP</button>
+                    <button type="button" id="partner-verify-otp-btn" class="button button-primary" hidden>Verify
+                      OTP</button>
+                    <span class="phone-verified-badge" id="partner-phone-verified-badge" hidden>
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                        <path d="M9.99502 2.99851L4.49776 8.49577L1.999 5.99702" stroke="currentColor"
+                          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                      Verified
+                    </span>
+                  </div>
+                </label>
+              </div>
+              <p class="otp-status" id="partner-otp-status-phone" role="status"></p>
+
+              <div data-otp-step hidden>
                 <div class="form-grid">
                   <label class="form-wide">
-                    <span>Contact mobile number</span>
+                    <span>Enter OTP</span>
                     <div class="phone-otp-row">
-                      <input id="partner-phone-input" aria-label="Mobile number" type="tel" maxlength="10"
-                        inputmode="tel" autocomplete="tel" placeholder="10-digit mobile number">
-                      <button type="button" id="partner-send-otp-btn" class="button button-primary">Send OTP</button>
-                      <button type="button" id="partner-verify-otp-btn" class="button button-primary" hidden>Verify
+                      <input id="partner-otp-input" aria-label="6-digit OTP" type="text" maxlength="6"
+                        inputmode="numeric" autocomplete="one-time-code" enterkeyhint="go" placeholder="6-digit OTP">
+                      <button type="button" id="partner-resend-otp-btn" class="button button-secondary">Resend
                         OTP</button>
-                      <span class="phone-verified-badge" id="partner-phone-verified-badge" hidden>
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                          <path d="M9.99502 2.99851L4.49776 8.49577L1.999 5.99702" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Verified
-                      </span>
                     </div>
                   </label>
                 </div>
-                <p class="otp-status" id="partner-otp-status-phone" role="status"></p>
+                <button type="button" id="partner-change-phone-btn" class="change-phone-btn">Change phone
+                  number</button>
+                <p class="otp-status" id="partner-otp-status-otp" role="status"></p>
+              </div>
 
-                <div data-otp-step hidden>
-                  <div class="form-grid">
-                    <label class="form-wide">
-                      <span>Enter OTP</span>
-                      <div class="phone-otp-row">
-                        <input id="partner-otp-input" aria-label="6-digit OTP" type="text" maxlength="6"
-                          inputmode="numeric" autocomplete="one-time-code" placeholder="6-digit OTP">
-                        <button type="button" id="partner-resend-otp-btn" class="button button-secondary">Resend
-                          OTP</button>
-                      </div>
-                    </label>
-                  </div>
-                  <button type="button" id="partner-change-phone-btn" class="change-phone-btn">Change phone
-                    number</button>
-                  <p class="otp-status" id="partner-otp-status-otp" role="status"></p>
+              <div data-form-step>
+                <div class="efr-fields" id="partner-fields-container" data-form-code="nivesh-baithak-partner"></div>
+
+                <div class="form-grid partner-extra-fields">
+                  <label class="form-wide">
+                    <span>Your Name *</span>
+                    <input type="text" name="full_name" id="partner-name" required placeholder="Full Name">
+                  </label>
+                  <label class="form-wide">
+                    <span>Official Email *</span>
+                    <input type="email" name="email" id="partner-email" required placeholder="name@company.com">
+                  </label>
+                  <label class="form-wide">
+                    <span>Company / Organisation *</span>
+                    <input type="text" name="organisation" id="partner-org" required placeholder="Organisation name">
+                  </label>
+                  <label class="form-wide">
+                    <span>Partnership Interest</span>
+                    <select name="interest" id="partner-interest">
+                      <option value="Sponsorship">Event Sponsor / Title Partner</option>
+                      <option value="Stall">Exhibition Stall / Booth</option>
+                      <option value="Speaker">Speaker Session / Panelist</option>
+                      <option value="Media">Media Partnership</option>
+                      <option value="Other">Other Collaboration</option>
+                    </select>
+                  </label>
+                  <label class="form-wide">
+                    <span>Message / Note</span>
+                    <textarea name="message" id="partner-msg" rows="3"
+                      placeholder="Tell us how you would like to collaborate..."></textarea>
+                  </label>
                 </div>
 
-                <div data-form-step>
-                  <div class="efr-fields" id="partner-fields-container" data-form-code="nivesh-baithak-partner"></div>
+                <p class="form-error" data-form-error role="alert" hidden></p>
 
-                  <div class="form-grid" style="margin-top: 16px;">
-                    <label class="form-wide">
-                      <span>Your Name *</span>
-                      <input type="text" name="full_name" id="partner-name" required placeholder="Full Name">
-                    </label>
-                    <label class="form-wide">
-                      <span>Official Email *</span>
-                      <input type="email" name="email" id="partner-email" required placeholder="name@company.com">
-                    </label>
-                    <label class="form-wide">
-                      <span>Company / Organisation *</span>
-                      <input type="text" name="organisation" id="partner-org" required placeholder="Organisation name">
-                    </label>
-                    <label class="form-wide">
-                      <span>Partnership Interest</span>
-                      <select name="interest" id="partner-interest">
-                        <option value="Sponsorship">Event Sponsor / Title Partner</option>
-                        <option value="Stall">Exhibition Stall / Booth</option>
-                        <option value="Speaker">Speaker Session / Panelist</option>
-                        <option value="Media">Media Partnership</option>
-                        <option value="Other">Other Collaboration</option>
-                      </select>
-                    </label>
-                    <label class="form-wide">
-                      <span>Message / Note</span>
-                      <textarea name="message" id="partner-msg" rows="3"
-                        placeholder="Tell us how you would like to collaborate..."></textarea>
-                    </label>
-                  </div>
-
-                  <p class="form-error" data-form-error role="alert" hidden></p>
-
-                  <button class="button button-accent form-submit" id="partner-save-next-btn" type="submit">
-                    Submit Inquiry
-                  </button>
-                </div>
+                <button class="button button-accent form-submit" id="partner-save-next-btn" type="submit">
+                  Submit Inquiry
+                </button>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="otp-view otp-view-success" data-otp-view="success">
-            <div class="otp-panel success-panel" role="status" aria-live="polite">
-              <div class="success-icon" aria-hidden="true">
-                <svg viewBox="0 0 64 64" fill="none" width="28" height="28">
-                  <circle cx="32" cy="32" r="30" fill="rgba(47,111,67,0.12)" />
-                  <path d="M18 33l9 9 19-21" stroke="var(--leaf)" stroke-width="4" stroke-linecap="round"
-                    stroke-linejoin="round" />
-                </svg>
-              </div>
-              <div class="success-copy">
-                <p class="section-kicker">Inquiry Received</p>
-                <h3>Thank you for reaching out</h3>
-                <p>Our partnerships team will contact you shortly.</p>
-              </div>
-              <div class="success-actions">
-                <button type="button" class="button button-accent" data-close-modal>Close</button>
-              </div>
+        <div class="otp-view otp-view-success" data-otp-view="success">
+          <div class="otp-panel success-panel" role="status" aria-live="polite">
+            <div class="success-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" fill="none" width="28" height="28">
+                <circle cx="32" cy="32" r="30" fill="rgba(47,111,67,0.12)" />
+                <path d="M18 33l9 9 19-21" stroke="var(--leaf)" stroke-width="4" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div class="success-copy">
+              <p class="section-kicker">Inquiry Received</p>
+              <h3>Thank you for reaching out</h3>
+              <p>Our partnerships team will contact you shortly.</p>
+            </div>
+            <div class="success-actions">
+              <button type="button" class="button button-accent" data-close-modal>Close</button>
             </div>
           </div>
-        </form>
-      </section>
-    </div>
+        </div>
+      </form>
+    </section>
+  </div>
 
 </body>
 
