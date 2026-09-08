@@ -562,8 +562,8 @@ button:disabled {
 
 .pick-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 7px;
+  grid-template-columns: 1fr;
+  gap: 8px;
   width: 100%;
   max-width: var(--picker-max);
 }
@@ -571,12 +571,12 @@ button:disabled {
 .pick-chip {
   position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  gap: 2px;
-  min-height: 58px;
-  padding: 8px 9px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  min-height: 66px;
+  padding: 11px 26px 11px 14px;
+  text-align: left;
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 12px;
   background: linear-gradient(135deg, #ff6b52, #f35336);
@@ -594,12 +594,12 @@ button:disabled {
 .pick-chip::after {
   content: "→";
   position: absolute;
-  right: 8px;
-  bottom: 7px;
-  font-size: 0.8rem;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.8);
-  display: none;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .pick-chip--featured {
@@ -616,8 +616,8 @@ button:disabled {
 .pick-flag {
   position: absolute;
   top: -8px;
-  left: 8px;
-  padding: 1px 6px;
+  left: 12px;
+  padding: 1px 7px;
   border-radius: 999px;
   background: var(--gold);
   color: #241c08;
@@ -627,15 +627,51 @@ button:disabled {
   letter-spacing: 0.06em;
 }
 
+.pick-head {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 88px;
+}
+
+.pick-perks {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.pick-perk {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.pick-perk::before {
+  content: "✓";
+  flex-shrink: 0;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.75);
+}
+
 .pick-name {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.9);
 }
 
 .pick-price {
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: 800;
+  line-height: 1.1;
   color: #fff;
   font-feature-settings: "tnum";
 }
@@ -1640,18 +1676,11 @@ input[type="checkbox"].efr-checkbox {
   .hero-tagline {
     font-size: 1.15rem;
   }
-  .pick-chip {
-    min-height: 64px;
-    padding: 9px 11px;
-  }
-  .pick-chip::after {
-    display: block;
-  }
   .pick-name {
     font-size: 0.76rem;
   }
   .pick-price {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
   .fact-card dd {
     font-size: 0.82rem;
@@ -1719,8 +1748,46 @@ input[type="checkbox"].efr-checkbox {
   .hero-picker {
     margin-top: 22px;
   }
+  /* Enough width for three columns; below this each pass stays a full-width
+     row so its perk lines are not squeezed into a ~120px column. */
   .pick-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
+  }
+  .pick-chip {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 9px;
+    min-height: 124px;
+    padding: 12px 14px 18px;
+  }
+  .pick-chip::after {
+    top: auto;
+    bottom: 9px;
+    right: 11px;
+    transform: none;
+  }
+  .pick-head {
+    min-width: 0;
+  }
+  .pick-perks {
+    padding-left: 0;
+    padding-right: 16px;
+    padding-top: 8px;
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.28);
+  }
+  .pick-name {
+    font-size: 0.82rem;
+  }
+  .pick-price {
+    font-size: 1.35rem;
+  }
+  .pick-perk {
+    font-size: 0.68rem;
+  }
+  .pick-flag {
+    left: 10px;
   }
   .hero-picker {
     --picker-max: 560px;
@@ -1947,6 +2014,9 @@ input[type="checkbox"].efr-checkbox {
   .hero-inner {
     grid-template-columns: 1.15fr 0.85fr;
     gap: 48px;
+  }
+  .hero-picker {
+    --picker-max: 620px;
   }
   .event-facts {
     grid-template-columns: repeat(4, minmax(0, 1fr));
