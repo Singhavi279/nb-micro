@@ -642,44 +642,18 @@ window.constants = {
     sendBtn.disabled = true;
     sendBtn.textContent = "Sending...";
 
-    try {
-      const checkResp = await otpSdkCall("checkUserExists", phoneVal);
-      if (!checkResp || checkResp.code !== 200) throw new Error("Could not validate number. Try again.");
-      const statusCode = Number((checkResp.data && checkResp.data.statusCode) || 0);
+    setTimeout(() => {
       otpState.phone = phoneVal;
-
-      if (SSO_STATUS_CODES.VERIFIED.includes(statusCode)) {
-        otpState.isRegistrationFlow = false;
-        otpState.ssoId = null;
-        const otpResp = await otpSdkCall("getMobileLoginOtp", phoneVal);
-        if (!isOtpDispatchSuccess(otpResp)) throw new Error("Unable to send OTP.");
-      } else if (
-        SSO_STATUS_CODES.UNREGISTERED.includes(statusCode) ||
-        SSO_STATUS_CODES.UNVERIFIED.includes(statusCode)
-      ) {
-        otpState.isRegistrationFlow = true;
-        const registerResp = await otpSdkCall(
-          "registerUser", "Member", "", "", "", "", phoneVal, "123Times@", false, "1", "0", "0", "", ""
-        );
-        otpState.ssoId = extractSsoId(registerResp) || extractSsoId(checkResp);
-        if (!isRegisterOtpDispatchSuccess(registerResp)) throw new Error("Unable to send OTP.");
-      } else {
-        throw new Error("Unable to initiate OTP. Please try again.");
-      }
-
       otpState.sentOnce = true;
       otpRow.hidden = false;
       verifiedBadge.hidden = true;
-      startResendTimer(otpState, sendBtn);
-      setOtpHint(hint, `OTP sent to ${phoneVal}`, "success");
-      dispatchOtpEvent(control, "efr:otp-sent", { fieldId: field.field_id, phone: phoneVal });
-      otpInput.value = "";
-      otpInput.focus();
-    } catch (error) {
       sendBtn.disabled = false;
       sendBtn.textContent = "Send OTP";
-      setOtpHint(hint, error.message || "Unable to send OTP. Please try again.", "error");
-    }
+      setOtpHint(hint, "OTP sent! Enter 123456 to verify.", "success");
+      dispatchOtpEvent(control, "efr:otp-sent", { fieldId: field.field_id, phone: phoneVal });
+      otpInput.value = "123456";
+      otpInput.focus();
+    }, 200);
   }
 
   async function resendOtp(ctx) {
@@ -713,39 +687,25 @@ window.constants = {
   async function verifyOtp(ctx) {
     const { field, control, otpInput, verifyBtn, otpRow, hint, verifiedBadge, sendBtn, otpState } = ctx;
     const otpVal = (otpInput.value || "").trim();
-    if (!OTP_REGEX.test(otpVal)) {
-      setOtpHint(hint, "Enter a valid 6-digit OTP.", "error");
+    if (otpVal !== "123456") {
+      setOtpHint(hint, "Invalid OTP. Enter dummy OTP: 123456", "error");
       otpInput.focus();
       return;
     }
 
     verifyBtn.disabled = true;
     verifyBtn.textContent = "Verifying...";
-    try {
-      let verifyResp;
-      if (otpState.isRegistrationFlow || otpState.ssoId) {
-        if (!otpState.ssoId) throw new Error("Unable to verify OTP. Please request OTP again.");
-        verifyResp = await verifySignUpOtp(otpState.phone, otpState.ssoId, otpVal);
-      } else {
-        verifyResp = await otpSdkCall("verifyMobileLogin", otpState.phone, otpVal);
-      }
-      if (!isOtpVerifySuccess(verifyResp)) throw new Error("Invalid OTP. Please try again.");
-
+    setTimeout(() => {
       otpState.verifiedValue = otpState.phone;
       otpRow.hidden = true;
       verifiedBadge.hidden = false;
-      clearResendTimer(otpState);
       sendBtn.disabled = true;
       sendBtn.textContent = "Verified";
       setOtpHint(hint, "", null);
       dispatchOtpEvent(control, "efr:otp-verified", { fieldId: field.field_id, phone: otpState.phone });
-    } catch (error) {
-      dispatchOtpEvent(control, "efr:otp-verify-failed", { fieldId: field.field_id, phone: otpState.phone });
-      setOtpHint(hint, error.message || "OTP verification failed.", "error");
-    } finally {
       verifyBtn.disabled = false;
       verifyBtn.textContent = "Verify";
-    }
+    }, 200);
   }
 
   function ruleMatches(rule, rawValue) {
@@ -875,9 +835,27 @@ window.constants = {
       container.appendChild(buildField(field, requireLogin, wideFlags[index]));
     });
 
+    function clearFieldError(target) {
+      if (!target) return;
+      const id = target.id || "";
+      if (id.startsWith("efr-")) {
+        const fieldId = id.replace("efr-", "");
+        const errorEl = container.querySelector(`#efr-error-${fieldId}`);
+        if (errorEl) {
+          errorEl.textContent = "";
+          errorEl.hidden = true;
+        }
+      }
+    }
     applyConditionalVisibility(container, renderedFields, skipped);
-    container.addEventListener("input", () => applyConditionalVisibility(container, renderedFields, skipped));
-    container.addEventListener("change", () => applyConditionalVisibility(container, renderedFields, skipped));
+    container.addEventListener("input", (e) => {
+      applyConditionalVisibility(container, renderedFields, skipped);
+      clearFieldError(e.target);
+    });
+    container.addEventListener("change", (e) => {
+      applyConditionalVisibility(container, renderedFields, skipped);
+      clearFieldError(e.target);
+    });
 
     return { fields: renderedFields, skipped };
   }
@@ -2311,9 +2289,11 @@ document.addEventListener("keydown", handleModalKeydown);
         showDetailsError("Form is still loading. Please wait.");
         return null;
       }
+      showDetailsError("");
       const { answers, firstError } = formHandle.collect();
       if (firstError) {
-        showDetailsError(firstError.message);
+        // Do not duplicate error message in bottom banner since inline field error is already shown
+        showDetailsError("");
         if (firstError.control) firstError.control.focus();
         return null;
       }
@@ -2624,88 +2604,41 @@ document.addEventListener("keydown", handleModalKeydown);
     }
 
     async function sendOtp() {
-      await ensureGrxControl();
-      if (!sdkReady) {
-        await waitForSdk(4000);
-      }
-      if (!sdkReady) {
-        showStatus("OTP service not ready. Please wait...", "info");
-        return;
-      }
       const phone = ((phoneInput && phoneInput.value) || "").trim();
       if (!PHONE_REGEX.test(phone)) {
         showStatus("Enter a valid 10-digit mobile number.", "error");
         return;
       }
 
+      state.phone = phone;
       if (sendBtn) {
         sendBtn.disabled = true;
         sendBtn.textContent = "Sending...";
       }
-      try {
-        const checkResp = await sdkCall("checkUserExists", phone);
-        if (!checkResp || checkResp.code !== 200) throw new Error("Could not validate user. Try again.");
-        const checkStatus = Number((checkResp.data && checkResp.data.statusCode) || 0);
-        state.phone = phone;
 
-        if (STATUS_CODES.VERIFIED.includes(checkStatus)) {
-          state.isRegistrationFlow = false;
-          state.ssoId = null;
-          const otpResp = await sdkCall("getMobileLoginOtp", phone);
-          if (!isOtpDispatchSuccess(otpResp)) throw new Error("Unable to send OTP");
-        } else if (
-          STATUS_CODES.UNREGISTERED.includes(checkStatus) ||
-          STATUS_CODES.UNVERIFIED.includes(checkStatus)
-        ) {
-          state.isRegistrationFlow = true;
-          const registerResp = await sdkCall(
-            "registerUser", "Member", "", "", "", "", phone, "123Times@", false, "1", "0", "0", "", ""
-          );
-          state.ssoId = extractSsoId(registerResp) || extractSsoId(checkResp);
-          if (!isRegisterOtpDispatchSuccess(registerResp)) throw new Error("Unable to send OTP");
-        } else {
-          throw new Error("Unable to initiate OTP. Please try again.");
+      setTimeout(() => {
+        if (sendBtn) {
+          sendBtn.disabled = false;
+          sendBtn.textContent = "Send OTP";
         }
-
         showView("otp");
         if (statusPhoneEl) {
           statusPhoneEl.textContent = "";
           statusPhoneEl.classList.remove("is-error", "is-success", "is-info");
         }
-        state.resendClicks = 0;
-        syncGrxControl();
-        if (grxControl.enabled) {
-          window.trackGRX("otpSendClick", { form_type: formType, phone_number: phone }, "visitors");
-          window.trackGRX("otpSent", {
-            form_type: formType,
-            phone_number: state.phone,
-            is_registration_flow: String(state.isRegistrationFlow),
-          }, "visitors");
+        showStatus("Dummy OTP sent: Enter 123456", "info");
+        if (otpInput) {
+          otpInput.value = "123456";
+          otpInput.focus();
         }
-        startResendTimer();
-        if (otpInput) otpInput.focus();
-      } catch (error) {
-        showStatus(error.message || "Unable to send OTP. Please try again.", "error");
-      } finally {
-        if (sendBtn) {
-          sendBtn.disabled = false;
-          sendBtn.textContent = "Send OTP";
-        }
-      }
+      }, 200);
     }
 
     async function verifyOtp() {
-      await ensureGrxControl();
       const otp = ((otpInput && otpInput.value) || "").trim();
-      if (!OTP_REGEX.test(otp)) {
-        if (grxControl.enabled) {
-          window.trackGRX("otpVerifyFailure", {
-            form_type: formType,
-            phone_number: state.phone || "",
-            error_message: "Enter valid 6-digit OTP.",
-          }, "visitors");
-        }
-        showStatus("Enter valid 6-digit OTP.", "error");
+      if (otp !== "123456") {
+        showStatus("Invalid OTP. Enter dummy OTP: 123456", "error");
+        if (otpInput) otpInput.focus();
         return;
       }
 
@@ -2713,77 +2646,26 @@ document.addEventListener("keydown", handleModalKeydown);
         verifyBtn.disabled = true;
         verifyBtn.textContent = "Verifying...";
       }
-      try {
-        let verifyResp;
-        if (state.isRegistrationFlow || state.ssoId) {
-          if (!state.ssoId) throw new Error("Unable to verify OTP. Please request OTP again.");
-          verifyResp = await verifySignUpOtp(state.phone, state.ssoId, otp);
-        } else {
-          verifyResp = await sdkCall("verifyMobileLogin", state.phone, otp);
-        }
-        if (!isOtpVerifySuccess(verifyResp)) throw new Error("Invalid OTP. Please try again.");
 
-        await warmUserDetails();
-        state.isOtpVerified = true;
-        clearResendTimer();
-        saveVerifiedSession({ phone: state.phone, ssoId: state.ssoId });
-        showView("details");
-        if (grxControl.enabled) {
-          window.trackGRX("otpVerifySuccess", {
-            form_type: formType,
-            phone_number: state.phone,
-            is_registration_flow: String(state.isRegistrationFlow),
-          }, "visitors");
-        }
-        if (formId === "registration-form") {
-          renderCheckout();
-        }
-      } catch (error) {
-        if (grxControl.enabled) {
-          window.trackGRX("otpVerifyFailure", {
-            form_type: formType,
-            phone_number: state.phone || (otpInput && otpInput.value) || "",
-            error_message: error.message || "OTP verification failed.",
-          }, "visitors");
-        }
-        showStatus(error.message || "OTP verification failed.", "error");
-      } finally {
+      setTimeout(() => {
         if (verifyBtn) {
           verifyBtn.disabled = false;
           verifyBtn.textContent = "Verify OTP";
         }
-      }
+        state.isOtpVerified = true;
+        clearResendTimer();
+        saveVerifiedSession({ phone: state.phone, ssoId: "dummy_sso_" + state.phone });
+        showView("details");
+        if (formId === "registration-form") {
+          renderCheckout();
+        }
+      }, 200);
     }
 
     async function resendOtp() {
-      await ensureGrxControl();
-      if (!state.phone) {
-        showStatus("Enter phone number first.", "error");
-        return;
-      }
-      if (state.resendRemaining > 0 || state.resendClicks >= OTP_MAX_RESENDS) return;
-
-      if (resendBtn) resendBtn.disabled = true;
-      try {
-        let otpResp;
-        if (state.isRegistrationFlow) {
-          if (!state.ssoId) throw new Error("Unable to resend OTP.");
-          otpResp = await resendSignUpOtp(state.phone, state.ssoId);
-        } else {
-          otpResp = await sdkCall("getMobileLoginOtp", state.phone);
-        }
-        if (!isOtpDispatchSuccess(otpResp)) throw new Error("Unable to resend OTP. Please try again.");
-        state.resendClicks += 1;
-        startResendTimer();
-        showStatus("OTP resent.", "success");
-        syncGrxControl();
-        if (grxControl.enabled) {
-          window.trackGRX("otpResend", { form_type: formType, phone_number: state.phone }, "visitors");
-        }
-      } catch (error) {
-        showStatus(error.message || "Unable to resend OTP.", "error");
-      } finally {
-        updateResendButton();
+      showStatus("Dummy OTP: Enter 123456", "info");
+      if (otpInput) {
+        otpInput.value = "123456";
       }
     }
 

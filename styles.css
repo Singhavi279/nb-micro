@@ -526,22 +526,22 @@ button:disabled {
 .initiative-badges {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   background: rgba(255, 255, 255, 0.96);
-  padding: 8px 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  padding: 6px 14px;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
 }
 
 .initiative-badges img {
   object-fit: contain;
-  max-height: 80px;
+  max-height: 40px;
   width: auto;
 }
 
 .initiative-badges img:last-child {
-  max-height: 75px;
-  border-radius: 4px;
+  max-height: 38px;
+  border-radius: 3px;
 }
 
 /* ── Split submit buttons for Pay Now / Pay Later ── */
@@ -2068,10 +2068,10 @@ input[type="checkbox"].efr-checkbox {
     font-size: 0.8rem;
   }
   .initiative-badges img {
-    max-height: 96px;
+    max-height: 48px;
   }
   .initiative-badges img:last-child {
-    max-height: 90px;
+    max-height: 45px;
   }
   .hero h1 {
     font-size: clamp(3.4rem, 9vw, 4.6rem);
