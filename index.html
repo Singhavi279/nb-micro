@@ -90,7 +90,7 @@
               <div class="initiative-badges">
                 <img src="https://static.langimg.com/photo/132278250.cms" alt="Times Internet Languages Live"
                   width="135" height="81">
-                <img src="https://static.langimg.com/photo/133675594.cms" alt="ET Hindi" width="127" height="33">
+                <img src="etgujaratilogo.jpeg" alt="ET Gujarati" width="447" height="447">
               </div>
             </div>
           </div>
@@ -369,9 +369,14 @@
 
                 <p class="form-error" data-form-error role="alert" hidden></p>
 
-                <button class="button button-accent form-submit" id="reg-save-next-btn" type="button">
-                  Continue to payment & nominate
-                </button>
+                <div class="form-submit-split">
+                  <button class="button button-accent" id="reg-pay-now-btn" type="button">
+                    Pay Now
+                  </button>
+                  <button class="button button-secondary" id="reg-pay-later-btn" type="button">
+                    Pay Later
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -440,11 +445,12 @@
               </svg>
             </div>
             <div class="success-copy">
-              <p class="section-kicker">Submitted</p>
-              <h3>Nomination received!</h3>
-              <p>Thanks, we’ve received your nomination. Our team will review and confirm your category placement shortly.</p>
+              <p class="section-kicker" id="reg-success-kicker">Submitted</p>
+              <h3 id="reg-success-title">Nomination Process Started</h3>
+              <p id="reg-success-desc">Your nomination process has been started and payment is pending, an executive from our team would be in touch shortly, in case of any queries contact: 99197 59480 (Zameer).</p>
             </div>
-            <div class="success-actions">
+            <div class="success-actions" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+              <a href="tel:+919919759480" class="button button-accent" style="padding: 10px 18px; font-weight: 700;">Call Zameer (99197 59480)</a>
               <button type="button" class="button button-primary" data-close-modal>Close</button>
             </div>
           </div>

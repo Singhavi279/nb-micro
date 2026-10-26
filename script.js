@@ -1744,9 +1744,11 @@ function showPaymentStatusIfReturn() {
   if (el) {
     el.classList.remove("hidden");
     if (status === "failure") {
-      el.textContent = "Payment was not completed. You can try again.";
+      el.textContent = "Payment was not completed. You can try again. In case of queries contact: 99197 59480 (Zameer).";
+    } else if (status === "success") {
+      el.textContent = "Your nomination process has been started and payment is completed, an executive from our team would be in touch shortly, in case of any queries contact: 99197 59480 (Zameer).";
     } else {
-      el.textContent = "Returned from payment. Please check your ticket confirmation. If payment failed, you can register again.";
+      el.textContent = "Your nomination process has been started and payment is pending, an executive from our team would be in touch shortly, in case of any queries contact: 99197 59480 (Zameer).";
     }
   }
   if (el && typeof el.scrollIntoView === "function") {
@@ -2458,7 +2460,7 @@ document.addEventListener("keydown", handleModalKeydown);
     }
 
     let savingDetails = false;
-    async function saveDetailsAndProceed() {
+    async function saveDetailsAndProceed(mode = "now") {
       if (savingDetails) return;
       await ensureGrxControl();
       showDetailsError("");
@@ -2474,12 +2476,18 @@ document.addEventListener("keydown", handleModalKeydown);
       if (!validated) return;
 
       savingDetails = true;
-      if (saveNextBtn) {
-        saveNextBtn.disabled = true;
-        saveNextBtn.textContent = "Saving...";
+      const activeBtn = mode === "later" ? payLaterBtn : payNowBtn || saveNextBtn;
+      const originalText = activeBtn ? activeBtn.textContent : "";
+      if (activeBtn) {
+        activeBtn.disabled = true;
+        activeBtn.textContent = mode === "later" ? "Submitting..." : "Saving...";
       }
       try {
-        const submission = await formHandle.submit({ phone_number: state.phone });
+        const submission = await formHandle.submit({
+          phone_number: state.phone,
+          payment_option: mode === "later" ? "pay_later" : "pay_now",
+          payment_status: mode === "later" ? "pending" : "initiated",
+        });
         if (window.NBTracking?.lead) {
           window.NBTracking.lead(
             submission && (submission.submission_id || submission.id || submission._id || submission.data?.submission_id || submission.data?.id || submission.data?._id),
@@ -2494,22 +2502,42 @@ document.addEventListener("keydown", handleModalKeydown);
             buildGrxPayload({
               submission_id: submission && (submission.submission_id || submission.id || submission._id || ""),
               submission_status: "success",
+              payment_option: mode === "later" ? "pay_later" : "pay_now",
+              payment_status: mode === "later" ? "pending" : "initiated",
             }),
             "event"
           );
         }
-        showView("product-detail");
-        renderCheckout();
-        if (window.NBTracking?.beginCheckout) {
-          window.NBTracking.beginCheckout(getSelectedNiveshProduct(), checkoutState.quantity);
+
+        if (mode === "later") {
+          // Pay Later: submit form and show pending popup message
+          const successDesc = form.querySelector("#reg-success-desc") || document.getElementById("reg-success-desc");
+          if (successDesc) {
+            successDesc.textContent = "Your nomination process has been started and payment is pending, an executive from our team would be in touch shortly, in case of any queries contact: 99197 59480 (Zameer).";
+          }
+          const successTitle = form.querySelector("#reg-success-title") || document.getElementById("reg-success-title");
+          if (successTitle) {
+            successTitle.textContent = "Nomination Process Started";
+          }
+          showView("success");
+          if (successCloseBtn) {
+            window.setTimeout(() => successCloseBtn.focus({ preventScroll: true }), 0);
+          }
+        } else {
+          // Pay Now: advance to step 2 payment
+          showView("product-detail");
+          renderCheckout();
+          if (window.NBTracking?.beginCheckout) {
+            window.NBTracking.beginCheckout(getSelectedNiveshProduct(), checkoutState.quantity);
+          }
         }
       } catch (error) {
         showDetailsError(error.message || "Unable to save your details. Please try again.");
       } finally {
         savingDetails = false;
-        if (saveNextBtn) {
-          saveNextBtn.disabled = false;
-          saveNextBtn.textContent = "Continue to payment";
+        if (activeBtn) {
+          activeBtn.disabled = false;
+          activeBtn.textContent = originalText || (mode === "later" ? "Pay Later" : "Pay Now");
         }
       }
     }
@@ -2578,6 +2606,10 @@ document.addEventListener("keydown", handleModalKeydown);
           );
         }
         showView("success");
+        const successDesc = form.querySelector("#reg-success-desc") || document.getElementById("reg-success-desc");
+        if (successDesc) {
+          successDesc.textContent = "Your nomination process has been started and payment is completed, an executive from our team would be in touch shortly, in case of any queries contact: 99197 59480 (Zameer).";
+        }
         if (successCloseBtn) {
           window.setTimeout(() => successCloseBtn.focus({ preventScroll: true }), 0);
         }
@@ -2808,8 +2840,11 @@ document.addEventListener("keydown", handleModalKeydown);
     if (changePhoneBtn) changePhoneBtn.addEventListener("click", goBackToPhoneStep);
 
     const saveNextBtn = form.querySelector(`#${prefix}-save-next-btn`);
+    const payNowBtn = form.querySelector(`#${prefix}-pay-now-btn`) || saveNextBtn;
+    const payLaterBtn = form.querySelector(`#${prefix}-pay-later-btn`);
     const backBtn = form.querySelector("#checkout-back-btn");
-    if (saveNextBtn) saveNextBtn.addEventListener("click", saveDetailsAndProceed);
+    if (payNowBtn) payNowBtn.addEventListener("click", () => saveDetailsAndProceed("now"));
+    if (payLaterBtn) payLaterBtn.addEventListener("click", () => saveDetailsAndProceed("later"));
     if (backBtn) backBtn.addEventListener("click", () => showView("details"));
     if (ticketSelect) {
       ticketSelect.addEventListener("change", () => {

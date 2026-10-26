@@ -526,21 +526,47 @@ button:disabled {
 .initiative-badges {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 4px 10px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 8px 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .initiative-badges img {
   object-fit: contain;
-  max-height: 20px;
+  max-height: 80px;
   width: auto;
 }
 
 .initiative-badges img:last-child {
-  max-height: 17px;
+  max-height: 75px;
+  border-radius: 4px;
+}
+
+/* ── Split submit buttons for Pay Now / Pay Later ── */
+.form-submit-split {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.form-submit-split .button {
+  flex: 1 1 50%;
+  padding: 13px 18px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  text-align: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+@media (max-width: 480px) {
+  .form-submit-split {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 
 .hero h1 {
@@ -2042,7 +2068,10 @@ input[type="checkbox"].efr-checkbox {
     font-size: 0.8rem;
   }
   .initiative-badges img {
-    max-height: 24px;
+    max-height: 96px;
+  }
+  .initiative-badges img:last-child {
+    max-height: 90px;
   }
   .hero h1 {
     font-size: clamp(3.4rem, 9vw, 4.6rem);
