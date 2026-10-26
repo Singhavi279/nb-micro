@@ -2901,63 +2901,33 @@ document.addEventListener("keydown", handleModalKeydown);
   showPaymentStatusIfReturn();
 })();
 
-/* ── 6. Hero Section Countdown & Expert Showcase Carousel ── */
+/* ── 6. Hero Expert Showcase Carousel & Live Speakers Fetch ── */
 (() => {
   "use strict";
 
+  const SPEAKERS_API_URL = "https://api.indiatimes.com/eventhub/api/public/events/6ac4e7a3b07cc0980c369622/custom-lists";
+
   const HERO_SPEAKERS = [
-    { name: "Ajit Mishra", role: "SVP of Research, Religare Broking", photo: "https://static.langimg.com/photo/133709675.cms" },
-    { name: "Amit Tripathi", role: "Chief Investment Officer - Fixed Income, Nippon India Mutual Fund", photo: "https://static.langimg.com/photo/133709692.cms" },
-    { name: "Dipesh Garg", role: "Co-Founder, SouthDelhi1", photo: "https://static.langimg.com/photo/133709699.cms" },
-    { name: "Gaurav Bhagat", role: "Founder, Gaurav Bhagat Academy", photo: "https://static.langimg.com/photo/133709712.cms" },
-    { name: "Himanshu Gupta", role: "Head of Research (Retail Broking & Investment), Jainam Broking", photo: "https://static.langimg.com/photo/133709726.cms" },
-    { name: "K Prahlad", role: "Financial Consultant & Director, X Capital India IMF", photo: "https://static.langimg.com/photo/133709742.cms" },
-    { name: "Pankaj Rai", role: "Executive Vice President & Zonal Head, Choice Group", photo: "https://static.langimg.com/photo/133709769.cms" },
-    { name: "Sharad Kohli", role: "Founder & Chairman, KCC Group", photo: "https://static.langimg.com/photo/133709782.cms" },
-    { name: "Sudeep Shah", role: "Vice President – Technical & Derivatives Research, SBICAP Securities", photo: "https://static.langimg.com/photo/133709792.cms" },
-    { name: "Vijay Kedia", role: "Founder of Kedia Securities Pvt. Ltd.", photo: "https://static.langimg.com/photo/133709803.cms" },
-    { name: "Vimal Sagar Tiwari", role: "Co-founder, CoinSwitch", photo: "https://static.langimg.com/photo/133709919.cms" },
+    { name: "Ashish Rajodiya", role: "Head – Commodities, PL Capital", photo: "https://static.langimg.com/photo/134938385.cms" },
+    { name: "Ajay Suresh Kedia", role: "Director, Kedia Advisory", photo: "https://static.langimg.com/photo/134940855.cms" },
+    { name: "Anuj Jain", role: "Co Founder, Green Portfolio", photo: "https://static.langimg.com/photo/134938608.cms" },
+    { name: "CA Kamlesh Kumar Chaurasiya", role: "Senior CA 18+ Years of Experience, Parther Ravi Ranjan & Co LLP", photo: "https://static.langimg.com/photo/134940870.cms" },
+    { name: "Jay Purohit", role: "Vice President Research, Spark Capital PWM", photo: "https://static.langimg.com/photo/134940278.cms" },
+    { name: "Kshitiz Mahajan", role: "Co-Founder and CEO, Complete Circle", photo: "https://static.langimg.com/photo/134940948.cms" },
+    { name: "Mahendra Luniya", role: "Founder & Chairman, Vighnaharta Gold Limited Gold Industry & Digital Gold Innovation Leader", photo: "https://static.langimg.com/photo/134940322.cms" },
+    { name: "Mahesh M. Ojha", role: "Vice President Research & BD, Kantilal Chhaganlal Securities", photo: "https://static.langimg.com/photo/134959579.cms" },
+    { name: "Mohit Gupta", role: "Co-Founder,Equirize Securities", photo: "https://static.langimg.com/photo/134938562.cms" },
+    { name: "Nisha Sanghavi", role: "CFP Director, Promore Fintech", photo: "https://static.langimg.com/photo/134941220.cms" },
+    { name: "Nisreen Mamaji", role: "MoneyWorks Financial Services, Founder | CFP®", photo: "https://static.langimg.com/photo/134941817.cms" },
+    { name: "Sugandha Sachdeva", role: "Founder, SS WealthStreet", photo: "https://static.langimg.com/photo/134940695.cms" },
+    { name: "Shri Jainendra Shandilya", role: "DGM, SEBI", photo: "https://static.langimg.com/photo/134941745.cms" }
   ];
 
   const prefersReducedMotion =
     typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // --- Countdown Timer ---
-  function initHeroCountdown() {
-    const daysEl = document.getElementById("cd-days");
-    const hoursEl = document.getElementById("cd-hours");
-    const minutesEl = document.getElementById("cd-minutes");
-    if (!daysEl || !hoursEl || !minutesEl) return;
-
-    // Event Date: 14 November 2026, 09:00:00 AM IST
-    const eventTime = new Date("2026-11-14T09:00:00+05:30").getTime();
-
-    function updateCountdown() {
-      const now = Date.now();
-      const diff = eventTime - now;
-
-      if (diff <= 0) {
-        daysEl.textContent = "00";
-        hoursEl.textContent = "00";
-        minutesEl.textContent = "00";
-        return;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-      daysEl.textContent = String(days).padStart(2, "0");
-      hoursEl.textContent = String(hours).padStart(2, "0");
-      minutesEl.textContent = String(minutes).padStart(2, "0");
-    }
-
-    updateCountdown();
-    setInterval(updateCountdown, 60000);
-  }
-
   // --- Hero Expert Showcase Carousel ---
-  function initHeroShowcase() {
+  async function initHeroShowcase() {
     const imgEl = document.getElementById("showcase-img");
     const nameEl = document.getElementById("showcase-name");
     const roleEl = document.getElementById("showcase-role");
@@ -2965,28 +2935,12 @@ document.addEventListener("keydown", handleModalKeydown);
 
     if (!imgEl || !nameEl || !roleEl || !dotsContainer) return;
 
-    const speakers = HERO_SPEAKERS.map((speaker) => ({
+    let speakers = HERO_SPEAKERS.map((speaker) => ({
       imgSrc: speaker.photo,
       imgAlt: speaker.name,
       name: speaker.name,
       role: speaker.role,
     }));
-    if (!speakers.length) return;
-
-    // Generate pagination dots
-    dotsContainer.innerHTML = "";
-    speakers.forEach((speaker, idx) => {
-      const dot = document.createElement("button");
-      dot.className = `showcase-dot ${idx === 0 ? "active" : ""}`;
-      dot.setAttribute("type", "button");
-      dot.setAttribute("aria-label", speaker.name || `Slide ${idx + 1}`);
-      dot.addEventListener("click", () => {
-        currentIndex = idx;
-        renderSpeaker(currentIndex);
-        resetTimer();
-      });
-      dotsContainer.appendChild(dot);
-    });
 
     let currentIndex = 0;
     let timer = null;
@@ -3010,6 +2964,22 @@ document.addEventListener("keydown", handleModalKeydown);
       });
     }
 
+    function setupDots() {
+      dotsContainer.innerHTML = "";
+      speakers.forEach((speaker, idx) => {
+        const dot = document.createElement("button");
+        dot.className = `showcase-dot ${idx === currentIndex ? "active" : ""}`;
+        dot.setAttribute("type", "button");
+        dot.setAttribute("aria-label", speaker.name || `Slide ${idx + 1}`);
+        dot.addEventListener("click", () => {
+          currentIndex = idx;
+          renderSpeaker(currentIndex);
+          resetTimer();
+        });
+        dotsContainer.appendChild(dot);
+      });
+    }
+
     function nextSpeaker() {
       currentIndex = (currentIndex + 1) % speakers.length;
       renderSpeaker(currentIndex);
@@ -3026,6 +2996,7 @@ document.addEventListener("keydown", handleModalKeydown);
       timer = setInterval(nextSpeaker, 4000);
     }
 
+    setupDots();
     renderSpeaker(0);
     resetTimer();
 
@@ -3034,7 +3005,6 @@ document.addEventListener("keydown", handleModalKeydown);
       showcaseCard.addEventListener("mouseenter", stopTimer);
       showcaseCard.addEventListener("mouseleave", resetTimer);
 
-      // Swipe between experts on touch devices.
       let touchStartX = null;
       showcaseCard.addEventListener("touchstart", (event) => {
         touchStartX = event.touches[0].clientX;
@@ -3052,20 +3022,34 @@ document.addEventListener("keydown", handleModalKeydown);
       }, { passive: true });
     }
 
-    // Don't burn cycles rotating a carousel nobody is looking at.
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) stopTimer();
       else resetTimer();
     });
+
+    // Dynamically fetch and update speakers list from API
+    try {
+      const res = await fetch(SPEAKERS_API_URL, { headers: { Accept: "application/json" } });
+      if (res.ok) {
+        const json = await res.json();
+        const speakerList = json?.data?.find((list) => list.slug === "speakers" || list.name === "Speakers");
+        if (speakerList?.items?.length) {
+          speakers = speakerList.items.map((item) => ({
+            imgSrc: item.image_url,
+            imgAlt: item.name,
+            name: item.name,
+            role: item.role_title,
+          }));
+          setupDots();
+          renderSpeaker(currentIndex < speakers.length ? currentIndex : 0);
+        }
+      }
+    } catch (_) {}
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      initHeroCountdown();
-      initHeroShowcase();
-    });
+    document.addEventListener("DOMContentLoaded", initHeroShowcase);
   } else {
-    initHeroCountdown();
     initHeroShowcase();
   }
 })();

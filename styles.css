@@ -456,7 +456,7 @@ button:disabled {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .hero-countdown {
@@ -614,9 +614,10 @@ button:disabled {
 
 /* ── Hero pass picker: one tap to a pre-selected checkout ── */
 .hero-picker {
-  --picker-max: 520px;
+  --picker-max: 540px;
   width: 100%;
-  margin-top: 16px;
+  margin-top: 12px;
+  margin-bottom: 16px;
 }
 
 .hero-picker-label {
@@ -757,21 +758,53 @@ button:disabled {
   color: #ffffff;
 }
 
+.hero-picker-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
 .hero-compare {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  margin-top: 6px;
-  padding: 4px 0;
+  padding: 2px 0;
   font-size: 0.82rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: underline;
   text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+.hero-compare:hover {
+  color: var(--gold);
+}
+
+.hero-picker-sep {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.8rem;
+}
+
+.hero-partner-link {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+.hero-partner-link:hover {
+  color: var(--gold);
 }
 
 .hero-reassure {
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.7);
 }
