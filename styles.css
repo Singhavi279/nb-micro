@@ -1295,20 +1295,24 @@ button:disabled {
 }
 
 /* ── Sticky mobile CTA ── */
+/* ── Responsive Sticky Footer CTA (Mobile-First UI) ── */
 .sticky-cta {
-  display: flex;
+  display: flex !important;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
-  background: var(--paper);
-  border-top: 1px solid #d7d3c8;
-  box-shadow: 0 -4px 18px rgba(8, 17, 38, 0.12);
-  z-index: 40;
+  gap: 12px;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(12, 21, 40, 0.94);
+  border-top: 1px solid rgba(242, 179, 48, 0.35);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(242, 179, 48, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 90;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0.3s;
 }
 
 .sticky-info {
@@ -1319,9 +1323,11 @@ button:disabled {
 }
 
 .sticky-pass {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
   line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1329,25 +1335,114 @@ button:disabled {
 }
 
 .sticky-price {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 800;
-  color: var(--ink);
+  color: #ffffff;
   line-height: 1.2;
   font-feature-settings: "tnum";
 }
 
-/* Fixed width: the label never changes, so live price updates in .sticky-info
-   cannot resize the button and shift the bar. */
+.sticky-desc {
+  display: none;
+  font-size: 0.75rem;
+  color: #a4b5d4;
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
 .sticky-button {
   flex: 0 0 auto;
-  width: 160px;
-  min-height: 46px;
-  padding-inline: 14px;
-  font-size: 0.92rem;
+  min-height: 44px;
+  padding: 10px 22px;
+  font-size: 0.94rem;
+  font-weight: 800;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff6b52, #f35336);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 16px rgba(243, 83, 54, 0.45);
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+  text-decoration: none;
+}
+
+.sticky-button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(243, 83, 54, 0.55);
+}
+
+.sticky-button:active {
+  transform: translateY(0);
+}
+
+/* Tablet screen size (600px - 991px) */
+@media (min-width: 600px) {
+  .sticky-cta {
+    padding: 12px 24px calc(12px + env(safe-area-inset-bottom));
+  }
+  .sticky-pass {
+    font-size: 0.76rem;
+  }
+  .sticky-price {
+    font-size: 1.15rem;
+  }
+  .sticky-desc {
+    display: block;
+  }
+  .sticky-button {
+    min-height: 46px;
+    padding: 11px 26px;
+    font-size: 0.98rem;
+  }
+}
+
+/* Desktop screen size (>= 992px) floating dock */
+@media (min-width: 992px) {
+  .sticky-cta {
+    bottom: 24px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%);
+    width: min(880px, calc(100% - 48px));
+    border-radius: 999px;
+    padding: 12px 30px;
+    border: 1px solid rgba(242, 179, 48, 0.45);
+    background: rgba(13, 23, 44, 0.92);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65), 0 0 28px rgba(242, 179, 48, 0.12);
+  }
+  .sticky-info {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+  .sticky-pass {
+    font-size: 0.78rem;
+    padding-right: 14px;
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .sticky-price {
+    font-size: 1.12rem;
+  }
+  .sticky-desc {
+    display: block;
+  }
+  .sticky-button {
+    border-radius: 999px;
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
 }
 
 .modal-open .sticky-cta {
-  visibility: hidden;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .load-status {
@@ -2194,10 +2289,6 @@ input[type="checkbox"].efr-checkbox {
   }
   .tier-benefits li {
     font-size: 0.95rem;
-  }
-  /* desktop keeps the header + hero CTAs, so the bottom bar is dropped */
-  .sticky-cta {
-    display: none;
   }
   .footer {
     padding-block: 24px;

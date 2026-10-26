@@ -1,11 +1,12 @@
 /**
- * Nivesh Baithak Surat — Partners, Expo & Sponsors Lead Generation Form Handler
+ * Nivesh Baithak Surat — Partners, Expo & Sponsors Lead Generation Form Handler & Hero Showcase
  */
 (() => {
   "use strict";
 
   // Configuration & Endpoints
   const SUBMIT_ENDPOINT = "https://api.indiatimes.com/eventhub/api/public/form-submissions";
+  const SPEAKERS_API_URL = "https://api.indiatimes.com/eventhub/api/public/events/6ac4e7a3b07cc0980c369622/custom-lists";
   const STORAGE_KEY = "nb_partner_leads_v1";
 
   // Data Definition
@@ -28,6 +29,25 @@
     "Other (Please Specify)"
   ];
 
+  const HERO_SPEAKERS = [
+    { name: "Ashish Rajodiya", role: "Head – Commodities, PL Capital", photo: "https://static.langimg.com/photo/134938385.cms" },
+    { name: "Ajay Suresh Kedia", role: "Director, Kedia Advisory", photo: "https://static.langimg.com/photo/134940855.cms" },
+    { name: "Anuj Jain", role: "Co Founder, Green Portfolio", photo: "https://static.langimg.com/photo/134938608.cms" },
+    { name: "CA Kamlesh Kumar Chaurasiya", role: "Senior CA 18+ Years of Experience, Parther Ravi Ranjan & Co LLP", photo: "https://static.langimg.com/photo/134940870.cms" },
+    { name: "Jay Purohit", role: "Vice President Research, Spark Capital PWM", photo: "https://static.langimg.com/photo/134940278.cms" },
+    { name: "Kshitiz Mahajan", role: "Co-Founder and CEO, Complete Circle", photo: "https://static.langimg.com/photo/134940948.cms" },
+    { name: "Mahendra Luniya", role: "Founder & Chairman, Vighnaharta Gold Limited Gold Industry & Digital Gold Innovation Leader", photo: "https://static.langimg.com/photo/134940322.cms" },
+    { name: "Mahesh M. Ojha", role: "Vice President Research & BD, Kantilal Chhaganlal Securities", photo: "https://static.langimg.com/photo/134959579.cms" },
+    { name: "Mohit Gupta", role: "Co-Founder,Equirize Securities", photo: "https://static.langimg.com/photo/134938562.cms" },
+    { name: "Nisha Sanghavi", role: "CFP Director, Promore Fintech", photo: "https://static.langimg.com/photo/134941220.cms" },
+    { name: "Nisreen Mamaji", role: "MoneyWorks Financial Services, Founder | CFP®", photo: "https://static.langimg.com/photo/134941817.cms" },
+    { name: "Sugandha Sachdeva", role: "Founder, SS WealthStreet", photo: "https://static.langimg.com/photo/134940695.cms" },
+    { name: "Shri Jainendra Shandilya", role: "DGM, SEBI", photo: "https://static.langimg.com/photo/134941745.cms" }
+  ];
+
+  const prefersReducedMotion =
+    typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   // State
   const selectedTypes = new Set();
   const selectedIndustries = new Set();
@@ -37,9 +57,8 @@
     const dropdown = document.getElementById(config.dropdownId);
     const list = document.getElementById(config.listId);
     const selectedSet = config.selectedSet;
-    const placeholderText = config.placeholder;
 
-    if (!box || !dropdown || !list) return;
+    if (!box || !dropdown || !list) return null;
 
     // Render options
     list.innerHTML = "";
@@ -179,8 +198,131 @@
     if (e.key === "Escape") closeAllDropdowns();
   });
 
-  // Initialize Form
+  // --- Hero Expert Showcase Carousel ---
+  async function initHeroShowcase() {
+    const imgEl = document.getElementById("showcase-img");
+    const nameEl = document.getElementById("showcase-name");
+    const roleEl = document.getElementById("showcase-role");
+    const dotsContainer = document.getElementById("showcase-dots");
+
+    if (!imgEl || !nameEl || !roleEl || !dotsContainer) return;
+
+    let speakers = HERO_SPEAKERS.map((speaker) => ({
+      imgSrc: speaker.photo,
+      imgAlt: speaker.name,
+      name: speaker.name,
+      role: speaker.role,
+    }));
+
+    let currentIndex = 0;
+    let timer = null;
+
+    function renderSpeaker(index) {
+      const speaker = speakers[index];
+      if (!speaker) return;
+
+      imgEl.style.opacity = "0.5";
+      setTimeout(() => {
+        imgEl.src = speaker.imgSrc;
+        imgEl.alt = speaker.imgAlt;
+        nameEl.textContent = speaker.name;
+        roleEl.textContent = speaker.role;
+        imgEl.style.opacity = "1";
+      }, 150);
+
+      const dots = dotsContainer.querySelectorAll(".showcase-dot");
+      dots.forEach((dot, dIdx) => {
+        dot.classList.toggle("active", dIdx === index);
+      });
+    }
+
+    function setupDots() {
+      dotsContainer.innerHTML = "";
+      speakers.forEach((speaker, idx) => {
+        const dot = document.createElement("button");
+        dot.className = `showcase-dot ${idx === currentIndex ? "active" : ""}`;
+        dot.setAttribute("type", "button");
+        dot.setAttribute("aria-label", speaker.name || `Slide ${idx + 1}`);
+        dot.addEventListener("click", () => {
+          currentIndex = idx;
+          renderSpeaker(currentIndex);
+          resetTimer();
+        });
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    function nextSpeaker() {
+      currentIndex = (currentIndex + 1) % speakers.length;
+      renderSpeaker(currentIndex);
+    }
+
+    function stopTimer() {
+      if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    function resetTimer() {
+      stopTimer();
+      if (prefersReducedMotion || speakers.length < 2) return;
+      timer = setInterval(nextSpeaker, 4000);
+    }
+
+    setupDots();
+    renderSpeaker(0);
+    resetTimer();
+
+    const showcaseCard = document.querySelector(".showcase-card");
+    if (showcaseCard) {
+      showcaseCard.addEventListener("mouseenter", stopTimer);
+      showcaseCard.addEventListener("mouseleave", resetTimer);
+
+      let touchStartX = null;
+      showcaseCard.addEventListener("touchstart", (event) => {
+        touchStartX = event.touches[0].clientX;
+        stopTimer();
+      }, { passive: true });
+      showcaseCard.addEventListener("touchend", (event) => {
+        if (touchStartX === null) return;
+        const deltaX = event.changedTouches[0].clientX - touchStartX;
+        touchStartX = null;
+        if (Math.abs(deltaX) > 40) {
+          currentIndex = (currentIndex + (deltaX < 0 ? 1 : speakers.length - 1)) % speakers.length;
+          renderSpeaker(currentIndex);
+        }
+        resetTimer();
+      }, { passive: true });
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopTimer();
+      else resetTimer();
+    });
+
+    // Dynamically fetch and update speakers list from API
+    try {
+      const res = await fetch(SPEAKERS_API_URL, { headers: { Accept: "application/json" } });
+      if (res.ok) {
+        const json = await res.json();
+        const speakerList = json?.data?.find((list) => list.slug === "speakers" || list.name === "Speakers");
+        if (speakerList?.items?.length) {
+          speakers = speakerList.items.map((item) => ({
+            imgSrc: item.image_url,
+            imgAlt: item.name,
+            name: item.name,
+            role: item.role_title,
+          }));
+          setupDots();
+          renderSpeaker(currentIndex < speakers.length ? currentIndex : 0);
+        }
+      }
+    } catch (_) {}
+  }
+
+  // Initialize Page & Form
   document.addEventListener("DOMContentLoaded", () => {
+    initHeroShowcase();
+
     const otherIndustryWrap = document.getElementById("other-industry-wrap");
     const otherIndustryInput = document.getElementById("other-industry-input");
 
@@ -195,7 +337,7 @@
     });
 
     // Init Industry Sectors Multi-Select
-    const industrySelect = initMultiSelect({
+    initMultiSelect({
       boxId: "box-industry",
       dropdownId: "dropdown-industry",
       listId: "list-industry",
@@ -211,6 +353,21 @@
           }
         }
       }
+    });
+
+    // Quick Action Chips in Hero
+    document.querySelectorAll("[data-type-select]").forEach((chip) => {
+      chip.addEventListener("click", (e) => {
+        e.preventDefault();
+        const type = chip.dataset.typeSelect;
+        if (type && typeSelect) {
+          typeSelect.select(type);
+        }
+        const target = document.getElementById("partner-form-section");
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
     });
 
     // Deep-link intent (e.g. ?type=sponsor or ?type=expo)
@@ -338,9 +495,7 @@
               answers_json: leadPayload
             })
           });
-        } catch (_) {
-          // Graceful fallback to client capture
-        }
+        } catch (_) {}
 
         // Display Success View
         if (refCodeEl) refCodeEl.textContent = refId;
