@@ -1041,6 +1041,20 @@ window.constants = {
   }
 
   async function refresh(code) {
+    if (code === "growth" || code === "acceleration") {
+      const card = cards.find(x => x.dataset.productCode === code);
+      const sale = Number(card?.dataset?.productUnitPrice) || (code === "growth" ? 14999 : 29999);
+      const regular = Number(card?.dataset?.productRegularPrice) || (code === "growth" ? 19999 : 39999);
+      const data = {
+        product_code: code,
+        product_name: card?.dataset?.productName || (code === "growth" ? "Growth Plan" : "Acceleration Plan"),
+        _sale_price: sale,
+        _regular_price: regular
+      };
+      prices.set(code, data);
+      startingPrice();
+      return data;
+    }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 10000);
     try {
@@ -1110,6 +1124,8 @@ const EVENTHUB_FORM_SUBMIT_URL = "https://api.indiatimes.com/eventhub/api/public
 
 const DEFAULT_GRX_TRACKING_NAME = "event";
 const NIVESH_PRODUCT_CODES = [
+  "growth",
+  "acceleration",
   "nivesh_delhi_learner",
   "nivesh_delhi_insight",
   "nivesh_delhi_elite",
@@ -1362,12 +1378,14 @@ function getCheckoutDiscount() {
 /* ── Selection UI: hero chips, cards, sticky bar and modal all show one truth ── */
 /* The recommended pass every CTA lands on unless the visitor (or a deep link)
    picks another one. */
-const NIVESH_DEFAULT_PRODUCT_CODE = "nivesh_delhi_insight";
+const NIVESH_DEFAULT_PRODUCT_CODE = "growth";
 
 const NIVESH_TIER_ALIASES = {
-  learner: "nivesh_delhi_learner",
-  insight: "nivesh_delhi_insight",
-  elite: "nivesh_delhi_elite",
+  growth: "growth",
+  acceleration: "acceleration",
+  learner: "growth",
+  insight: "acceleration",
+  elite: "acceleration",
 };
 
 function findProductCard(productCode) {
@@ -1452,8 +1470,8 @@ function syncSelectionUi() {
     if (stickyPassEl) stickyPassEl.textContent = product.product_name || "Selected pass";
     if (stickyPriceEl) stickyPriceEl.textContent = formatMoney(unitPrice);
   } else if (Number.isFinite(window.nbStartingPrice) && window.nbStartingPrice !== null) {
-    if (stickyPassEl) stickyPassEl.textContent = "Limited seats · Sep 27";
-    if (stickyPriceEl) stickyPriceEl.textContent = "from " + formatMoney(window.nbStartingPrice);
+    if (stickyPassEl) stickyPassEl.textContent = "Awards Nominations Open";
+    if (stickyPriceEl) stickyPriceEl.textContent = "from " + formatMoney(window.nbStartingPrice) + "+GST";
   }
 }
 window.nbSyncSelectionUi = syncSelectionUi;
@@ -2911,8 +2929,8 @@ document.addEventListener("keydown", handleModalKeydown);
     const minutesEl = document.getElementById("cd-minutes");
     if (!daysEl || !hoursEl || !minutesEl) return;
 
-    // Event Date: September 27, 2026, 10:00:00 AM IST
-    const eventTime = new Date("2026-09-27T10:00:00+05:30").getTime();
+    // Event Date: 14 November 2026, 09:00:00 AM IST
+    const eventTime = new Date("2026-11-14T09:00:00+05:30").getTime();
 
     function updateCountdown() {
       const now = Date.now();

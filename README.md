@@ -1,6 +1,6 @@
 # Nivesh Baithak — Micro Landing Page (`nb-micro`)
 
-Vibrant, lightweight investor summit landing page for **Nivesh Baithak 2026** (September 27, 2026 — Bharat Mandapam, New Delhi).
+Vibrant, lightweight investor summit landing page for **Nivesh Baithak Surat** (14 November 2026 — Surat).
 
 ## Architecture
 
