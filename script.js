@@ -1966,6 +1966,104 @@ document.addEventListener("keydown", handleModalKeydown);
     } catch (error) {}
   }
 
+  /* Multi-select dropdown of award segments; options are read from the
+     categories tabs so the list never drifts from the section it describes. */
+  function initSegmentSelect(root) {
+    if (!root) return null;
+    const toggle = root.querySelector("[data-segment-toggle]");
+    const list = root.querySelector("[data-segment-list]");
+    const summary = root.querySelector("[data-segment-summary]");
+    const errorEl = root.querySelector("[data-segment-error]");
+    const placeholder = summary.textContent;
+    const tabs = document.querySelectorAll("[data-catv2]");
+    if (!tabs.length) {
+      root.hidden = true;
+      return null;
+    }
+
+    tabs.forEach((tab) => {
+      const name = tab.querySelector("strong").textContent.trim();
+      const count = tab.querySelector("small").textContent.trim();
+      const option = document.createElement("label");
+      option.className = "segment-option";
+      option.setAttribute("role", "option");
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.value = name;
+      const text = document.createElement("span");
+      text.textContent = name;
+      const meta = document.createElement("small");
+      meta.textContent = count;
+      option.append(box, text, meta);
+      list.appendChild(option);
+    });
+
+    const boxes = () => Array.from(list.querySelectorAll("input:checked"));
+    const values = () => boxes().map((b) => b.value);
+
+    function render() {
+      const picked = values();
+      summary.textContent = "";
+      if (!picked.length) {
+        summary.textContent = placeholder;
+        summary.classList.remove("has-value");
+        return;
+      }
+      summary.classList.add("has-value");
+      picked.forEach((name) => {
+        const chip = document.createElement("span");
+        chip.className = "segment-chip";
+        chip.textContent = name;
+        summary.appendChild(chip);
+      });
+    }
+
+    function setOpen(open) {
+      list.hidden = !open;
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    toggle.addEventListener("click", () => setOpen(list.hidden));
+    root.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !list.hidden) {
+        event.stopPropagation(); // close the list only, not the whole modal
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    document.addEventListener("click", (event) => {
+      if (!list.hidden && !root.contains(event.target)) setOpen(false);
+    });
+    list.addEventListener("change", () => {
+      render();
+      if (values().length) errorEl.hidden = true;
+    });
+    const parentForm = root.closest("form");
+    if (parentForm) {
+      // form.reset() clears the checkboxes but not the chips / error state
+      parentForm.addEventListener("reset", () => {
+        setTimeout(() => {
+          render();
+          errorEl.hidden = true;
+          setOpen(false);
+        }, 0);
+      });
+    }
+
+    return {
+      values,
+      validate() {
+        const ok = values().length > 0;
+        errorEl.hidden = ok;
+        if (!ok) {
+          setOpen(true);
+          toggle.focus();
+        }
+        return ok;
+      },
+    };
+  }
+
   function mapAnswersToProfile(config, answers) {
     const profile = {};
     const meta = {};
@@ -2189,6 +2287,7 @@ document.addEventListener("keydown", handleModalKeydown);
     const successView = form.querySelector('[data-otp-view="success"]');
     const successCloseBtn = successView ? successView.querySelector("[data-close-modal]") : null;
     const formType = formId === "registration-form" ? "register" : "partner";
+    const segmentSelect = initSegmentSelect(form.querySelector("[data-segment-select]"));
     let grxControl = { enabled: false };
     const views = {};
     form.querySelectorAll("[data-otp-view]").forEach((el) => {
@@ -2307,6 +2406,8 @@ document.addEventListener("keydown", handleModalKeydown);
       if (!validated) return null;
       const { fullName, email, answers } = validated;
 
+      if (segmentSelect && !segmentSelect.validate()) return null;
+
       if (consentInput && !consentInput.checked) {
         showDetailsError("Please accept the consent checkbox to continue.");
         consentInput.focus();
@@ -2325,6 +2426,7 @@ document.addEventListener("keydown", handleModalKeydown);
         email: email.toLowerCase(),
         phone_number: state.phone,
         phone: state.phone,
+        award_segments: segmentSelect ? segmentSelect.values().join(", ") : "",
         sso_id: ssoId,
         host_url: window.location.href,
         current_city: answers.city || "",
@@ -2375,6 +2477,7 @@ document.addEventListener("keydown", handleModalKeydown);
 
       if (formType === "register") {
         if (answers.investor_profile) payload.profile_type = answers.investor_profile;
+        if (segmentSelect) payload.award_segments = segmentSelect.values().join(", ");
         Object.assign(payload, buildProductGrxFields());
       }
 
@@ -2454,6 +2557,7 @@ document.addEventListener("keydown", handleModalKeydown);
       }
       const validated = validateNameEmail();
       if (!validated) return;
+      if (segmentSelect && !segmentSelect.validate()) return;
 
       savingDetails = true;
       const activeBtn = mode === "later" ? payLaterBtn : payNowBtn || saveNextBtn;
@@ -2465,6 +2569,7 @@ document.addEventListener("keydown", handleModalKeydown);
       try {
         const submission = await formHandle.submit({
           phone_number: state.phone,
+          award_segments: segmentSelect ? segmentSelect.values() : [],
           payment_option: mode === "later" ? "pay_later" : "pay_now",
           payment_status: mode === "later" ? "pending" : "initiated",
         });

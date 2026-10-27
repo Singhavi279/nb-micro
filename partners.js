@@ -7,7 +7,6 @@
   // Configuration & Endpoints
   const SUBMIT_ENDPOINT = "https://api.indiatimes.com/eventhub/api/public/form-submissions";
   const SPEAKERS_API_URL = "https://api.indiatimes.com/eventhub/api/public/events/6ac4e7a3b07cc0980c369622/custom-lists";
-  const STORAGE_KEY = "nb_partner_leads_v1";
 
   // Data Definition
   const PARTNERSHIP_OPTIONS = [
@@ -456,12 +455,31 @@
       }
 
       try {
-        // 1. Save to LocalStorage archive
+        // 1. Post to EventHub first: only a delivered lead counts as a lead
+        let delivered = false;
         try {
-          const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-          existing.push(leadPayload);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+          const res = await fetch(SUBMIT_ENDPOINT, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json"
+            },
+            body: JSON.stringify({
+              form_code: "nivesh-baithak-partner",
+              answers_json: leadPayload
+            })
+          });
+          delivered = res.ok;
         } catch (_) {}
+
+        if (!delivered) {
+          showFeedback("We couldn't submit your inquiry right now. Please try again, or call Deepika on 99711 29087.", "error");
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Submit Partnership Inquiry";
+          }
+          return;
+        }
 
         // 2. Track Lead in GA4
         if (typeof window.gtag === "function") {
@@ -481,21 +499,6 @@
             currency: "INR"
           });
         }
-
-        // 4. Post to EventHub public form submissions API if accessible
-        try {
-          await fetch(SUBMIT_ENDPOINT, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json"
-            },
-            body: JSON.stringify({
-              form_code: "nivesh-baithak-partner",
-              answers_json: leadPayload
-            })
-          });
-        } catch (_) {}
 
         // Display Success View
         if (refCodeEl) refCodeEl.textContent = refId;

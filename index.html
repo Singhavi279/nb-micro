@@ -17,6 +17,7 @@
   <meta property="og:image" content="https://static.langimg.com/photo/132278264.cms">
   <meta name="twitter:card" content="summary_large_image">
 
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8F%86%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://static.langimg.com">
   <link rel="preconnect" href="https://setufeed.indiatimes.com" crossorigin>
   <link rel="preconnect" href="https://api.indiatimes.com" crossorigin>
@@ -71,6 +72,7 @@
     </div>
     <nav class="header-nav" aria-label="Quick Links">
       <a href="#buy" class="nav-link">Plans</a>
+      <a href="#categories" class="button button-secondary header-categories-btn" data-cta="header_categories">View Categories</a>
       <button class="button button-accent header-register-btn" type="button" data-open-modal="register" data-cta="header"
         data-nav-section="header">Nominate Now</button>
     </nav>
@@ -131,6 +133,7 @@
               <a class="hero-partner-link" href="partners/">Expo &amp; Sponsors &rarr;</a>
             </div>
             <p class="hero-reassure">Secure checkout · UPI, cards &amp; netbanking · Instant confirmation</p>
+            <a class="button hero-partner-btn hero-categories-btn" href="#categories" data-cta="hero_categories">Not sure which fits? View 38 Categories <span aria-hidden="true">&darr;</span></a>
           </div>
 
           <p class="hero-description">Get recognised at India's investor education summit. Nominate your brand across categories &mdash; stocks, mutual funds, bonds, and more &mdash; and stand out where it matters.</p>
@@ -138,7 +141,7 @@
           <dl class="event-facts">
             <div class="fact-card">
               <dt>Venue</dt>
-              <dd>Surat · Venue to be announced</dd>
+              <dd>Hilton Garden Inn, Surat</dd>
             </div>
             <div class="fact-card">
               <dt>Date</dt>
@@ -147,10 +150,6 @@
             <div class="fact-card">
               <dt>Time</dt>
               <dd>09:00 AM onwards</dd>
-            </div>
-            <div class="fact-card">
-              <dt>Format</dt>
-              <dd>Offline learning + expert Q&amp;A</dd>
             </div>
           </dl>
         </div>
@@ -260,9 +259,562 @@
 
         </div>
 
+        <div class="pricing-categories-cta">
+          <p>Wondering where your brand fits? Explore all 38 award categories before you nominate.</p>
+          <a href="#categories" class="button button-secondary" data-cta="pricing_categories">View Categories <span aria-hidden="true">&darr;</span></a>
+        </div>
+
         <p class="pricing-note">* All prices are exclusive of GST (18%). Nominations are subject to review. Limited slots available per category.</p>
 
       </div>
+    </section>
+
+    <section class="categories-section" id="categories" aria-labelledby="categories-title">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">Award Categories</p>
+          <h2 id="categories-title">38 categories across 7 award clusters.</h2>
+          <p class="categories-subhead">Pick a cluster to see its categories and who can apply.</p>
+        </div>
+
+        <div class="cat-v2-layout">
+          <nav class="cat-v2-sidebar" aria-label="Award clusters" role="tablist">
+            <button class="cat-v2-sidebar-tab is-active" data-catv2="platform" id="catv2-tab-platform" role="tab" aria-selected="true" aria-controls="catv2-panel-platform" tabindex="0" type="button">
+              <span class="cat-v2-tab-icon" aria-hidden="true">🏢</span>
+              <span class="cat-v2-tab-text">
+                <strong>Platform &amp; Institutional</strong>
+                <small>10 categories</small>
+              </span>
+            </button>
+            <button class="cat-v2-sidebar-tab" data-catv2="campaign" id="catv2-tab-campaign" role="tab" aria-selected="false" aria-controls="catv2-panel-campaign" tabindex="-1" type="button">
+              <span class="cat-v2-tab-icon" aria-hidden="true">📣</span>
+              <span class="cat-v2-tab-text">
+                <strong>Campaign &amp; Content</strong>
+                <small>14 categories</small>
+              </span>
+            </button>
+            <button class="cat-v2-sidebar-tab" data-catv2="innovation" id="catv2-tab-innovation" role="tab" aria-selected="false" aria-controls="catv2-panel-innovation" tabindex="-1" type="button">
+              <span class="cat-v2-tab-icon" aria-hidden="true">🚀</span>
+              <span class="cat-v2-tab-text">
+                <strong>Innovation &amp; Technology</strong>
+                <small>4 categories</small>
+              </span>
+            </button>
+            <button class="cat-v2-sidebar-tab" data-catv2="brand" id="catv2-tab-brand" role="tab" aria-selected="false" aria-controls="catv2-panel-brand" tabindex="-1" type="button">
+              <span class="cat-v2-tab-icon" aria-hidden="true">🎯</span>
+              <span class="cat-v2-tab-text">
+                <strong>Brand &amp; Market</strong>
+                <small>3 categories</small>
+              </span>
+            </button>
+            <button class="cat-v2-sidebar-tab" data-catv2="distribution" id="catv2-tab-distribution" role="tab" aria-selected="false" aria-controls="catv2-panel-distribution" tabindex="-1" type="button">
+              <span class="cat-v2-tab-icon" aria-hidden="true">🤝</span>
+              <span class="cat-v2-tab-text">
+                <strong>Distribution &amp; Advisory</strong>
+                <small>2 categories</small>
+              </span>
+            </button>
+            <button class="cat-v2-sidebar-tab" data-catv2="leadership" id="catv2-tab-leadership" role="tab" aria-selected="false" aria-controls="catv2-panel-leadership" tabindex="-1" type="button">
+              <span class="cat-v2-tab-icon" aria-hidden="true">👤</span>
+              <span class="cat-v2-tab-text">
+                <strong>Leadership Recognition</strong>
+                <small>2 categories</small>
+              </span>
+            </button>
+            <button class="cat-v2-sidebar-tab" data-catv2="special" id="catv2-tab-special" role="tab" aria-selected="false" aria-controls="catv2-panel-special" tabindex="-1" type="button">
+              <span class="cat-v2-tab-icon" aria-hidden="true">🏆</span>
+              <span class="cat-v2-tab-text">
+                <strong>Special Recognition</strong>
+                <small>3 categories</small>
+              </span>
+            </button>
+          </nav>
+
+          <div class="cat-v2-content">
+
+            <div class="cat-v2-panel is-active" data-catv2-panel="platform" id="catv2-panel-platform" role="tabpanel" aria-labelledby="catv2-tab-platform">
+              <div class="cat-v2-panel-header">
+                <span class="cat-v2-panel-icon" aria-hidden="true">🏢</span>
+                <div>
+                  <h3>Platform &amp; Institutional Excellence</h3>
+                  <p>SEBI/RBI/IRDAI-regulated platforms, banks, wealth firms and fintechs serving Indian retail investors.</p>
+                </div>
+              </div>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Investor Trust &amp; Transparency Platform of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>SEBI/RBI/IRDAI-regulated or otherwise eligible investment, brokerage, bank, wealth, fintech or financial-services platforms serving Indian retail investors.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Digital Brokerage &amp; Trading Platform of the Year – Investor Experience</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Registered stock brokers and digital brokerage/trading platforms serving Indian retail investors.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Mutual Fund House of the Year – Investor Education</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>AMFI-member / SEBI-registered asset management companies and mutual fund houses operating in India.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Fixed Income &amp; Bonds Platform of the Year – Investor Education</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Regulated bond/fixed-income platforms, brokerages, banks, AMCs and wealth platforms with a material retail fixed-income proposition.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Wealth Management Platform of the Year – Investor Education &amp; Client Experience</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Wealth managers, private banks, portfolio managers, digital wealth platforms and advisory firms with an India retail/affluent proposition.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Bank of the Year – Financial Literacy &amp; Investor Engagement</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Scheduled commercial banks, small finance banks and eligible banking institutions with documented financial literacy/investor education initiatives.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Wealth Advisory Firm of the Year – Investor Education &amp; Client Engagement</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>SEBI-registered investment advisers/portfolio managers and eligible wealth/advisory firms with a documented client-education practice.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Research &amp; Market Intelligence Platform of the Year – Investor Empowerment</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Research, analytics, screening, market-intelligence and investor-information platforms serving retail investors in India.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Digital Wealth Advisory Platform of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Digital wealth platforms, RIAs, portfolio managers and eligible advisory firms with a regulated India wealth/advisory proposition.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Legacy of Excellence in Channelising India’s Water Resources</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Eligible institutions and organisations with a sustained, measurable contribution to channelising India’s water resources through responsible investment, financing or infrastructure initiatives.</p>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div class="cat-v2-panel" data-catv2-panel="campaign" id="catv2-panel-campaign" role="tabpanel" aria-labelledby="catv2-tab-campaign">
+              <div class="cat-v2-panel-header">
+                <span class="cat-v2-panel-icon" aria-hidden="true">📣</span>
+                <div>
+                  <h3>Campaign &amp; Content Excellence</h3>
+                  <p>Banks, AMCs, brokers, insurers, fintechs, wealth firms and agencies driving investor awareness campaigns.</p>
+                </div>
+              </div>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Investor Education Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Banks, AMCs, brokers, insurers, fintechs, wealth firms, exchanges/associations, agencies with client authorisation, and other eligible financial institutions.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Wealth Awareness Campaign of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Wealth managers, banks, insurers, AMCs, brokers, fintechs and agencies with client authorisation.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Mutual Fund Investor Education Campaign of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>AMCs, mutual fund distributors, banks/brokers with eligible mutual-fund education campaigns, and agencies with client authorisation.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Insurance Awareness Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>IRDAI-regulated life/general/health insurers, eligible distributors/banks and agencies with client authorisation.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Regional / Vernacular Investor Education Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Any eligible BFSI/fintech/wealth organisation or agency with an India investor-education initiative delivered materially in Hindi or other Indian languages.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Excellence in Rural Financial Literacy &amp; Inclusion</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Banks, AMCs, insurers, fintechs, NGOs, government-linked institutions and agencies running measurable financial-literacy or inclusion initiatives for rural communities.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Digital Content Campaign for Investor Awareness</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>BFSI/fintech/wealth brands, research/content platforms and agencies with client authorisation.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Investor Education Video / Podcast Series of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Banks, AMCs, brokers, insurers, fintechs, wealth firms, research/media-style brand properties and agencies with client authorisation.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Investor Protection &amp; Fraud Awareness Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Banks, brokers, AMCs, insurers, fintechs, exchanges, industry bodies and eligible entities running investor-protection/cyber-fraud awareness.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Women Investor Education &amp; Inclusion Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Eligible BFSI/fintech/wealth organisations, foundations/industry bodies and agencies with client authorisation running women-focused financial education.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Young / New-to-Market Investor Education Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Brokers, fintechs, AMCs, banks, insurers, wealth platforms, educational initiatives and agencies with client authorisation targeting first-time/young investors.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Retirement &amp; Long-Term Wealth Awareness Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Insurers, AMCs, banks, pension/retirement platforms, wealth firms and agencies with client authorisation.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Passive &amp; ETF Investor Education Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>AMCs, brokers, investment platforms and eligible institutions with ETF/index/passive-investing education initiatives.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Responsible Trading &amp; Markets Education Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Registered brokers, trading platforms, market-education providers and eligible entities delivering responsible trading/risk education.</p>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div class="cat-v2-panel" data-catv2-panel="innovation" id="catv2-panel-innovation" role="tabpanel" aria-labelledby="catv2-tab-innovation">
+              <div class="cat-v2-panel-header">
+                <span class="cat-v2-panel-icon" aria-hidden="true">🚀</span>
+                <div>
+                  <h3>Innovation &amp; Technology</h3>
+                  <p>Fintechs, banks, brokers, AMCs and wealth platforms with India-live technology innovations.</p>
+                </div>
+              </div>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Fintech Innovation in Investor Engagement</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Fintechs, banks, brokers, AMCs, wealth platforms and financial institutions with an India-live investor-engagement innovation.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> AI-Enabled Investor Experience / Advisory Innovation</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Fintechs, brokers, banks, wealth/advisory firms and technology providers with a deployed AI-enabled investor experience or advisory-support solution.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Investor App of the Year – Retail Investing Experience</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Brokerages, investment fintechs, banks, AMCs and wealth platforms with an India-live retail investing app.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Digital Onboarding &amp; Investor Access Innovation</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Banks, brokers, fintechs, AMCs and wealth platforms with a material digital onboarding, KYC/accessibility or investor-access innovation.</p>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div class="cat-v2-panel" data-catv2-panel="brand" id="catv2-panel-brand" role="tabpanel" aria-labelledby="catv2-tab-brand">
+              <div class="cat-v2-panel-header">
+                <span class="cat-v2-panel-icon" aria-hidden="true">🎯</span>
+                <div>
+                  <h3>Brand &amp; Market Positioning</h3>
+                  <p>India-focused fintech and wealthtech brands demonstrating investor trust and education leadership.</p>
+                </div>
+              </div>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Emerging WealthTech Brand of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>India-focused wealthtech/investment brands generally ≤7 years old or in a clearly documented scale-up phase; regulated/eligible where required.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Most Trusted Fintech Brand of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>India-focused fintech brands (broking, wealth, payments, insurtech, or lending) with a minimum of 2 years of operating history and demonstrable retail user base; SEBI/RBI/IRDAI registered or regulated where applicable; must demonstrate a consumer trust or investor education initiative in the nomination period.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Best D2C Investment Platform</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>India-focused, app-first investment platforms offering direct (non-advisor-mediated) access to equities, mutual funds, bonds, gold, or alternative assets; generally ≤7 years old or in a clearly documented scale-up phase; SEBI-registered or operating under a regulated partner where required; platform must be live and transacting in the nomination period.</p>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div class="cat-v2-panel" data-catv2-panel="distribution" id="catv2-panel-distribution" role="tabpanel" aria-labelledby="catv2-tab-distribution">
+              <div class="cat-v2-panel-header">
+                <span class="cat-v2-panel-icon" aria-hidden="true">🤝</span>
+                <div>
+                  <h3>Distribution &amp; Advisory Network</h3>
+                  <p>Institutions running education and enablement programmes for IFAs, distributors and investor communities.</p>
+                </div>
+              </div>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> IFA / Distributor Engagement Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>AMCs, insurers, wealth platforms, banks and eligible financial institutions running education/enablement programmes for IFAs, MFDs, distributors or advisors.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Investor Community &amp; Engagement Initiative of the Year</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Brokerages, fintechs, AMCs, banks, wealth firms, research platforms and eligible communities with structured investor-engagement programmes.</p>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div class="cat-v2-panel" data-catv2-panel="leadership" id="catv2-panel-leadership" role="tabpanel" aria-labelledby="catv2-tab-leadership">
+              <div class="cat-v2-panel-header">
+                <span class="cat-v2-panel-icon" aria-hidden="true">👤</span>
+                <div>
+                  <h3>Leadership Recognition</h3>
+                  <p>Outstanding individual leaders driving investor education and engagement in the BFSI/fintech ecosystem.</p>
+                </div>
+              </div>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> CXO of the Year – Investor Education &amp; Engagement</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Serving CXOs/senior leaders of eligible BFSI/fintech/wealth organisations, nominated by their organisation.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card">
+                <summary><span class="cat-v2-check" aria-hidden="true">✓</span> Woman Leader in Wealth &amp; Investment Advisory</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Serving women leaders in wealth management, investment advisory, brokerage, asset management or investor education, nominated by their organisation.</p>
+                  </div>
+                </div>
+              </details>
+            </div>
+
+            <div class="cat-v2-panel" data-catv2-panel="special" id="catv2-panel-special" role="tabpanel" aria-labelledby="catv2-tab-special">
+              <div class="cat-v2-panel-header">
+                <span class="cat-v2-panel-icon" aria-hidden="true">🏆</span>
+                <div>
+                  <h3>Special Recognition</h3>
+                  <p>Editorial and jury-selected recognitions for exceptional trust, transparency, and community choice.</p>
+                </div>
+              </div>
+
+              <details class="cat-v2-card cat-v2-card--special">
+                <summary><span class="cat-v2-check cat-v2-check--gold" aria-hidden="true">★</span> Editor's Choice – Responsible Investor Communication</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Eligible organisations considered by the editorial/jury based on publicly available or submitted evidence; no paid nomination required.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card cat-v2-card--special">
+                <summary><span class="cat-v2-check cat-v2-check--gold" aria-hidden="true">★</span> Jury Recognition – Investor Trust &amp; Transparency</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Eligible regulated financial-services organisations shortlisted by the jury for exceptional documented trust/transparency practice.</p>
+                  </div>
+                </div>
+              </details>
+
+              <details class="cat-v2-card cat-v2-card--special">
+                <summary><span class="cat-v2-check cat-v2-check--gold" aria-hidden="true">★</span> Nivesh Baithak Community Choice Award</summary>
+                <div class="cat-v2-card-body">
+                  <div class="cat-v2-block cat-v2-block--who">
+                    <span class="cat-v2-block-label">Who Can Apply</span>
+                    <p>Only shortlisted finalists from eligible paid categories; no separate nomination fee.</p>
+                  </div>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        <div class="categories-cta">
+          <p>Found your category? Nominate in a few minutes.</p>
+          <button class="button button-accent" type="button" data-open-modal="register" data-cta="categories_nominate"
+            data-nav-section="categories_section">Nominate Now</button>
+        </div>
+      </div>
+      <script>
+        (function () {
+          var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-catv2]'));
+          function show(tab, focus) {
+            tabs.forEach(function (t) {
+              var on = t === tab;
+              t.classList.toggle('is-active', on);
+              t.setAttribute('aria-selected', on ? 'true' : 'false');
+              t.tabIndex = on ? 0 : -1;
+              document.getElementById('catv2-panel-' + t.getAttribute('data-catv2')).classList.toggle('is-active', on);
+            });
+            if (focus) tab.focus();
+            if (tab.scrollIntoView) tab.scrollIntoView({ block: 'nearest', inline: 'center' });
+          }
+          tabs.forEach(function (t, i) {
+            t.addEventListener('click', function () { show(t); });
+            t.addEventListener('keydown', function (ev) {
+              var n = ev.key === 'ArrowRight' ? i + 1 : ev.key === 'ArrowLeft' ? i - 1 : ev.key === 'Home' ? 0 : ev.key === 'End' ? tabs.length - 1 : null;
+              if (n === null) return;
+              ev.preventDefault();
+              show(tabs[(n + tabs.length) % tabs.length], true);
+            });
+          });
+        })();
+      </script>
     </section>
 
   </main>
@@ -278,8 +830,11 @@
       <span class="sticky-price" data-sticky-price>From ₹14,999+GST</span>
       <span class="sticky-desc">Growth &amp; Acceleration Plans · Surat 2026</span>
     </div>
-    <button class="sticky-button" data-open-modal="register" data-cta="sticky"
-      data-nav-section="sticky_cta">Nominate Now &rarr;</button>
+    <div class="sticky-actions">
+      <a href="#categories" class="sticky-button sticky-button--ghost" data-cta="sticky_categories">Categories</a>
+      <button class="sticky-button" data-open-modal="register" data-cta="sticky"
+        data-nav-section="sticky_cta">Nominate Now &rarr;</button>
+    </div>
   </div>
 
   <p id="checkout-load-status" class="load-status" role="status" hidden></p>
@@ -366,6 +921,18 @@
 
               <div data-form-step>
                 <div class="efr-fields" id="reg-fields-container" data-form-code="nivesh-baithak-register"></div>
+
+                <div class="segment-select" data-segment-select>
+                  <span class="segment-label" id="segment-label">Award segments of interest <span class="req">*</span></span>
+                  <button type="button" class="segment-box" data-segment-toggle aria-haspopup="listbox"
+                    aria-expanded="false" aria-labelledby="segment-label">
+                    <span class="segment-summary" data-segment-summary>Select one or more segments</span>
+                    <span class="segment-chevron" aria-hidden="true"></span>
+                  </button>
+                  <div class="segment-dropdown" data-segment-list role="listbox" aria-multiselectable="true"
+                    aria-labelledby="segment-label" hidden></div>
+                  <p class="efr-error" data-segment-error role="alert" hidden>Please select at least one segment.</p>
+                </div>
 
                 <p class="form-error" data-form-error role="alert" hidden></p>
 
