@@ -3073,3 +3073,49 @@ input[type="checkbox"].efr-checkbox {
   flex-shrink: 0;
   accent-color: var(--indigo);
 }
+
+/* ── Direct-contact note (click-to-call) ── */
+.contact-note {
+  margin-top: 14px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.contact-note strong {
+  font-weight: 700;
+}
+
+.contact-note a {
+  display: inline-block;
+  padding-block: 4px;
+  color: var(--indigo);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.hero .contact-note,
+.pricing-section .contact-note,
+.partners-body .contact-note {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.hero .contact-note a,
+.pricing-section .contact-note a,
+.partners-body .contact-note a {
+  color: var(--gold);
+}
+
+.categories-section .contact-note {
+  text-align: center;
+}
+
+.partners-body .partner-section-lead + .contact-note,
+.partners-body .avenues-section > .contact-note {
+  text-align: center;
+}
+
+.partner-footer > .contact-note {
+  margin: 0 0 12px;
+}
